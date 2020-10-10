@@ -1,0 +1,23 @@
+Vivado Simulator 2019.2
+Copyright 1986-1999, 2001-2019 Xilinx, Inc. All Rights Reserved.
+Running: /home/uncerso/Xilinx/Vivado/2019.2/bin/unwrapped/lnx64.o/xelab -wto d0107093dca247b1b1911b66a2405522 --incr --debug typical --relax --mt 8 -L xil_defaultlib -L secureip --snapshot test_behav xil_defaultlib.test -log elaborate.log 
+Using 8 slave threads.
+Starting static elaboration
+WARNING: [VRFC 10-3671] readline called past the end of file 'ramfile' [/home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/sources_1/new/ROM.vhd:27]
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package std.standard
+Compiling package std.textio
+Compiling package ieee.std_logic_1164
+Compiling package ieee.numeric_std
+Compiling architecture instruction_memory_arch of entity xil_defaultlib.instruction_memory [instruction_memory_default]
+Compiling architecture data_memory_arch of entity xil_defaultlib.data_memory [data_memory_default]
+Compiling architecture control_unit_arch of entity xil_defaultlib.control_unit [control_unit_default]
+Compiling architecture sign_ext_arch of entity xil_defaultlib.sign_ext [sign_ext_default]
+Compiling architecture registers_arch of entity xil_defaultlib.registers [registers_default]
+Compiling architecture core_arch of entity xil_defaultlib.core [core_default]
+Compiling architecture mips_processor_arch of entity xil_defaultlib.mips_processor [mips_processor_default]
+Compiling architecture test_arch of entity xil_defaultlib.test
+Built simulation snapshot test_behav

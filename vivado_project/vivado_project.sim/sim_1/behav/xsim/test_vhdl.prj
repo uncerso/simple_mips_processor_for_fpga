@@ -1,0 +1,13 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../vivado_project.srcs/sources_1/new/control_unit.vhd" \
+"../../../../vivado_project.srcs/sources_1/new/helpers.vhd" \
+"../../../../vivado_project.srcs/sources_1/new/Registers.vhd" \
+"../../../../vivado_project.srcs/sources_1/new/Core.vhd" \
+"../../../../vivado_project.srcs/sources_1/new/ROM.vhd" \
+"../../../../vivado_project.srcs/sources_1/new/RAM.vhd" \
+"../../../../vivado_project.srcs/sources_1/new/Processor.vhd" \
+"../../../../vivado_project.srcs/sim_1/new/test.vhd" \
+
+# Do not sort compile order
+nosort
