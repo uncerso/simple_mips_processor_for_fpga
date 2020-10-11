@@ -8,8 +8,9 @@ generic (constant data_bits        : Integer := 32;
          constant reg_address_bits : Integer := 5;
          constant operation_bits   : Integer := 6;
          constant imm_bits         : Integer := 16;
-         constant rs_pos           : Integer := 26;
-         constant rt_pos           : Integer := 21;
+         constant r1_pos           : Integer := 26; -- data_bits - operation_bits
+         constant r2_pos           : Integer := 21; -- r1_pos - reg_address_bits
+         constant r3_pos           : Integer := 16; -- r2_pos - reg_address_bits
          constant bit_shift        : Integer := 2
 );
 
@@ -30,36 +31,76 @@ signal instruction_pointer : unsigned(mem_address_bits-1 downto 0) := to_unsigne
 signal sign_imm : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 signal register_data_1 : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 signal register_data_2 : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal reg_write_enable : std_logic;
+signal alu_mode : unsigned(2 downto 0);
+signal alu_result : unsigned(data_bits-1 downto 0);
+signal alu_src  : std_logic;
+signal right_alu_argument : unsigned(data_bits-1 downto 0);
+signal reg_write_address : unsigned(reg_address_bits-1 downto 0);
+signal reg_write_data : unsigned(data_bits-1 downto 0);
+signal reg_address : std_logic;
+signal write_mem_to_reg : std_logic;
+signal zero_alu_result  : std_logic;
+signal branch  : std_logic;
+signal jump  : std_logic;
 begin
-CUNIT : entity work.control_unit port map(opcode => instruction(data_bits-1 downto data_bits-operation_bits),
-                                          funct => instruction(operation_bits-1 downto 0),
-                                          mem_write_enable => mem_write_enable);
+CUNIT : entity work.control_unit port map(
+    opcode => instruction(data_bits-1 downto data_bits-operation_bits),
+    funct => instruction(operation_bits-1 downto 0),
+    mem_write_enable => mem_write_enable,
+    reg_write_enable => reg_write_enable,
+    alu_mode => alu_mode,
+    alu_src => alu_src,
+    reg_address => reg_address,
+    write_mem_to_reg => write_mem_to_reg,
+    branch => branch,
+    jump => jump
+);
 
-SEXT : entity work.sign_ext port map(inp  => instruction(imm_bits-1 downto 0),
-                                     outp => sign_imm);
+SEXT : entity work.sign_ext port map(
+    inp  => instruction(imm_bits-1 downto 0),
+    outp => sign_imm
+);
 
 REGS : entity work.registers port map(
     clk  => clk,
-    register_address_1 => instruction(rs_pos-1 downto rs_pos-reg_address_bits),
-    register_address_2 => to_unsigned(0, reg_address_bits),
+    reset => reset,
+    register_address_1 => instruction(r1_pos-1 downto r1_pos-reg_address_bits),
+    register_address_2 => instruction(r2_pos-1 downto r2_pos-reg_address_bits),
     register_data_1 => register_data_1,
     register_data_2 => register_data_2,
-    write_data  => read_data,
-    write_address => instruction(rt_pos-1 downto rt_pos-reg_address_bits),
-    write_enable  => '1'
+    write_data  => reg_write_data,
+    write_address => reg_write_address,
+    write_enable  => reg_write_enable
 );
-    ip <= instruction_pointer;
+
+MALU : entity work.alu port map(
+    mode => alu_mode,
+    result => alu_result,
+    lhs => register_data_1,
+    rhs => right_alu_argument,
+    zero => zero_alu_result
+);
 
     process (clk) is begin
         if (clk'event and clk = '1') then
             if (reset = '1') then
                 instruction_pointer <= to_unsigned(0, mem_address_bits);
-            else
-                instruction_pointer <= instruction_pointer + 1;
+            else if jump = '1' or (branch = '1' and zero_alu_result = '1') then
+                    instruction_pointer <= sign_imm(mem_address_bits-1 downto 0);
+                else if instruction /= 0 then
+                        instruction_pointer <= instruction_pointer + 1;
+                    end if;
+                end if;
             end if;
         end if;
     end process;
 
-    mem_address <= register_data_1(mem_address_bits-1+bit_shift downto bit_shift) + sign_imm(mem_address_bits-1+bit_shift downto bit_shift);
-    write_data <= to_unsigned(0, data_bits);
+    reg_write_data <= read_data when write_mem_to_reg = '1' else alu_result; -- when lw instruction
+    reg_write_address <= instruction(r3_pos-1 downto r3_pos-reg_address_bits) when reg_address = '1' -- when R-type instruction
+                    else instruction(r2_pos-1 downto r2_pos-reg_address_bits);
+    right_alu_argument <= register_data_2 when alu_src = '1' else sign_imm; -- when R-type instruction
+    mem_address <= alu_result(mem_address_bits-1+bit_shift downto bit_shift); -- truncate and convert from address 'in bytes' to address 'in words'
+    write_data <= register_data_2;
+    ip <= instruction_pointer;
 end core_arch;

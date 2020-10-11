@@ -19,7 +19,7 @@ process is begin
 end process;
 
 process is begin
-    wait for 5ns;
+    wait for 7ns;
     reset <= '0';
     wait;
 end process;

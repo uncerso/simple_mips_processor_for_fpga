@@ -9,6 +9,7 @@ generic (constant data_bits    : Integer := 32;
 
 port (
     clk  : in std_logic;
+    reset  : in std_logic;
     register_address_1 : in unsigned(address_bits-1 downto 0);
     register_address_2 : in unsigned(address_bits-1 downto 0);
     register_data_1 : out unsigned(data_bits-1 downto 0);
@@ -38,7 +39,11 @@ begin
 
     process (clk) is begin
         if (clk'event and clk = '1' and write_enable = '1') then
-            RAM(to_integer(write_address)) <= write_data;
+            if reset = '1' then
+                RAM(to_integer(write_address)) <= to_unsigned(0, data_bits);
+            else 
+                RAM(to_integer(write_address)) <= write_data;
+            end if;
         end if;
     end process;
 

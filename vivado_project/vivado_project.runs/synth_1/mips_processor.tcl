@@ -32,6 +32,7 @@ read_vhdl -library xil_defaultlib {
   /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/sources_1/new/control_unit.vhd
   /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/sources_1/new/helpers.vhd
   /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/sources_1/new/Registers.vhd
+  /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/sources_1/new/alu.vhd
   /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/sources_1/new/Core.vhd
   /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/sources_1/new/ROM.vhd
   /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/sources_1/new/RAM.vhd
@@ -45,6 +46,9 @@ read_vhdl -library xil_defaultlib {
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
+read_xdc /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/constrs_1/new/clock.xdc
+set_property used_in_implementation false [get_files /home/uncerso/src/mips_processor/vivado_project/vivado_project.srcs/constrs_1/new/clock.xdc]
+
 set_param ips.enableIPCacheLiteLoad 1
 close [open __synthesis_is_running__ w]
 

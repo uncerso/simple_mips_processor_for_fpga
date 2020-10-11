@@ -17,6 +17,7 @@ Compiling architecture data_memory_arch of entity xil_defaultlib.data_memory [da
 Compiling architecture control_unit_arch of entity xil_defaultlib.control_unit [control_unit_default]
 Compiling architecture sign_ext_arch of entity xil_defaultlib.sign_ext [sign_ext_default]
 Compiling architecture registers_arch of entity xil_defaultlib.registers [registers_default]
+Compiling architecture alu_arch of entity xil_defaultlib.alu [alu_default]
 Compiling architecture core_arch of entity xil_defaultlib.core [core_default]
 Compiling architecture mips_processor_arch of entity xil_defaultlib.mips_processor [mips_processor_default]
 Compiling architecture test_arch of entity xil_defaultlib.test

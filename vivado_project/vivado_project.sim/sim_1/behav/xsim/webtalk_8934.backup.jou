@@ -2,11 +2,11 @@
 # Webtalk v2019.2.1 (64-bit)
 # SW Build 2729669 on Thu Dec  5 04:48:12 MST 2019
 # IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
-# Start of session at: Fri Oct  9 22:21:52 2020
-# Process ID: 16734
+# Start of session at: Sun Oct 11 21:55:50 2020
+# Process ID: 8934
 # Current directory: /home/uncerso/src/mips_processor/vivado_project/vivado_project.sim/sim_1/behav/xsim
-# Command line: wbtcv -mode batch -source /home/uncerso/src/mips_processor/vivado_project/vivado_project.sim/sim_1/behav/xsim/xsim.dir/control_unit_behav/webtalk/xsim_webtalk.tcl -notrace
+# Command line: wbtcv -mode batch -source /home/uncerso/src/mips_processor/vivado_project/vivado_project.sim/sim_1/behav/xsim/xsim.dir/test_behav/webtalk/xsim_webtalk.tcl -notrace
 # Log file: /home/uncerso/src/mips_processor/vivado_project/vivado_project.sim/sim_1/behav/xsim/webtalk.log
 # Journal file: /home/uncerso/src/mips_processor/vivado_project/vivado_project.sim/sim_1/behav/xsim/webtalk.jou
 #-----------------------------------------------------------
-source /home/uncerso/src/mips_processor/vivado_project/vivado_project.sim/sim_1/behav/xsim/xsim.dir/control_unit_behav/webtalk/xsim_webtalk.tcl -notrace
+source /home/uncerso/src/mips_processor/vivado_project/vivado_project.sim/sim_1/behav/xsim/xsim.dir/test_behav/webtalk/xsim_webtalk.tcl -notrace

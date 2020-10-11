@@ -13,7 +13,8 @@ port(
     read_data   : out unsigned(data_bits-1    downto 0);
     write_data  : in  unsigned(data_bits-1    downto 0);
     write_enable: in std_logic;
-    clk         : in std_logic
+    clk         : in std_logic;
+    reset       : in std_logic
 );
 end entity;
 
@@ -22,11 +23,9 @@ architecture data_memory_arch of data_memory is
 
    impure function FillWithZeroes return RamType is
       variable RAM : RamType;
-      variable ind : integer := 0;
    begin
       for I in RamType'range loop
-         RAM(I) := to_unsigned(ind, word_size);
-         ind := ind + 1;
+         RAM(I) := to_unsigned(0, word_size);
       end loop;
       return RAM;
    end function;
@@ -39,7 +38,11 @@ begin
 
     process (clk) is begin
         if (clk'event and clk = '1' and write_enable = '1') then
-            RAM(to_integer(address)) <= write_data;
+            if reset = '1' then
+                RAM(to_integer(address)) <= to_unsigned(0, data_bits);
+            else
+                RAM(to_integer(address)) <= write_data;
+            end if;
         end if;
     end process;
 

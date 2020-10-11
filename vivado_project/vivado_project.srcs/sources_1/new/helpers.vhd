@@ -12,7 +12,6 @@ port(inp : in  unsigned(ext_from-1 downto 0);
 end entity;
 
 architecture sign_ext_arch of sign_ext is
-shared variable sign_bit : integer;
 begin
 
     outp <= 

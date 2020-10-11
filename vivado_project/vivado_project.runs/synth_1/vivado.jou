@@ -2,8 +2,8 @@
 # Vivado v2019.2.1 (64-bit)
 # SW Build 2729669 on Thu Dec  5 04:48:12 MST 2019
 # IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
-# Start of session at: Sat Oct 10 18:02:40 2020
-# Process ID: 35754
+# Start of session at: Mon Oct 12 01:45:22 2020
+# Process ID: 20088
 # Current directory: /home/uncerso/src/mips_processor/vivado_project/vivado_project.runs/synth_1
 # Command line: vivado -log mips_processor.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source mips_processor.tcl
 # Log file: /home/uncerso/src/mips_processor/vivado_project/vivado_project.runs/synth_1/mips_processor.vds
