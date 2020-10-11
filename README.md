@@ -15,6 +15,6 @@ Implementation of mips processor for fpga with assembler for it
 - [x] and
 - [x] lw
 - [x] sw
-- [x] beq
+- [x] beq (immediate argument is absolute address)
 - [x] slt
 - [x] j
