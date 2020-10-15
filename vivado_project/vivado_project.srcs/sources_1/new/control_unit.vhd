@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity control_unit is
-generic (constant data_bits    : Integer := 32;
-         constant operation_bits : Integer := 6
+generic (data_bits      : Integer;
+         operation_bits : Integer
 );
 
 port(opcode   : in unsigned(operation_bits-1 downto 0);
@@ -23,7 +23,7 @@ end entity;
 architecture control_unit_arch of control_unit is begin
     mem_write_enable <= '1' when opcode = 43  -- sw
                          else '0';
-    reg_write_enable <= '1' when opcode = 0 or opcode = 35 or opcode = 8 -- R-type or lw or addi
+    reg_write_enable <= '1' when opcode = 0 or opcode = 35 or opcode = 8 or opcode = 9 -- R-type or lw or addi or addiu
                          else '0';
     
     alu_src <= '1' when opcode = 0 or opcode = 4 -- R-type or beq

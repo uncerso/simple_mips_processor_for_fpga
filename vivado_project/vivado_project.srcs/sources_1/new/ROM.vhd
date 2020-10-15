@@ -4,9 +4,8 @@ use ieee.numeric_std.all;
 use std.textio.all;
 
 entity instruction_memory is 
-generic(constant address_bits : Integer := 8;
-        constant instruction_bits    : Integer := 32;
-        constant ram_size     : Integer := (2**8) -- 2**address_bits
+generic(address_bits     : Integer;
+        instruction_bits : Integer
 );
 port(
     address     : in  unsigned(address_bits-1     downto 0);
@@ -15,6 +14,7 @@ port(
 end entity;
 
 architecture instruction_memory_arch of instruction_memory is 
+   constant ram_size : Integer := (2**address_bits);
    type RamType is array(0 to ram_size-1) of bit_vector(instruction_bits-1 downto 0);
 
    -- https://stackoverflow.com/questions/10555729/bram-init-in-vhdl

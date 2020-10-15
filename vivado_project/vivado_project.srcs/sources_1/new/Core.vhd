@@ -3,15 +3,10 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity core is
-generic (constant data_bits        : Integer := 32;
-         constant mem_address_bits : Integer := 8;
-         constant reg_address_bits : Integer := 5;
-         constant operation_bits   : Integer := 6;
-         constant imm_bits         : Integer := 16;
-         constant r1_pos           : Integer := 26; -- data_bits - operation_bits
-         constant r2_pos           : Integer := 21; -- r1_pos - reg_address_bits
-         constant r3_pos           : Integer := 16; -- r2_pos - reg_address_bits
-         constant bit_shift        : Integer := 2
+generic (data_bits        : Integer;
+         mem_address_bits : Integer;
+         reg_address_bits : Integer;
+         word_base        : Integer
 );
 
 port (
@@ -27,6 +22,12 @@ port (
 end entity;
 
 architecture core_arch of core is
+constant operation_bits   : Integer := 6;
+constant imm_bits         : Integer := 16;
+constant r1_pos : Integer := data_bits - operation_bits;
+constant r2_pos : Integer := r1_pos - reg_address_bits;
+constant r3_pos : Integer := r2_pos - reg_address_bits;
+
 signal instruction_pointer : unsigned(mem_address_bits-1 downto 0) := to_unsigned(0, mem_address_bits);
 signal sign_imm : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 signal register_data_1 : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
@@ -44,7 +45,12 @@ signal zero_alu_result  : std_logic;
 signal branch  : std_logic;
 signal jump  : std_logic;
 begin
-CUNIT : entity work.control_unit port map(
+CUNIT : entity work.control_unit
+generic map(
+    data_bits => data_bits,
+    operation_bits => operation_bits
+)
+port map(
     opcode => instruction(data_bits-1 downto data_bits-operation_bits),
     funct => instruction(operation_bits-1 downto 0),
     mem_write_enable => mem_write_enable,
@@ -62,7 +68,12 @@ SEXT : entity work.sign_ext port map(
     outp => sign_imm
 );
 
-REGS : entity work.registers port map(
+REGS : entity work.registers
+generic map(
+    data_bits => data_bits,
+    address_bits => reg_address_bits
+)
+port map(
     clk  => clk,
     reset => reset,
     register_address_1 => instruction(r1_pos-1 downto r1_pos-reg_address_bits),
@@ -74,7 +85,11 @@ REGS : entity work.registers port map(
     write_enable  => reg_write_enable
 );
 
-MALU : entity work.alu port map(
+MALU : entity work.alu
+generic map(
+    data_bits => data_bits
+)
+port map(
     mode => alu_mode,
     result => alu_result,
     lhs => register_data_1,
@@ -100,7 +115,7 @@ MALU : entity work.alu port map(
     reg_write_address <= instruction(r3_pos-1 downto r3_pos-reg_address_bits) when reg_address = '1' -- when R-type instruction
                     else instruction(r2_pos-1 downto r2_pos-reg_address_bits);
     right_alu_argument <= register_data_2 when alu_src = '1' else sign_imm; -- when R-type instruction
-    mem_address <= alu_result(mem_address_bits-1+bit_shift downto bit_shift); -- truncate and convert from address 'in bytes' to address 'in words'
+    mem_address <= alu_result(mem_address_bits-1+word_base downto word_base); -- truncate and convert from address 'in bytes' to address 'in words'
     write_data <= register_data_2;
     ip <= instruction_pointer;
 end core_arch;

@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity registers is
-generic (constant data_bits    : Integer := 32;
-         constant address_bits : Integer := 5
+generic (data_bits    : Integer;
+         address_bits : Integer
 );
 
 port (
@@ -23,16 +23,7 @@ end entity;
 architecture registers_arch of registers is
     type RamType is array(0 to (2**address_bits)-1) of unsigned(data_bits-1 downto 0);
 
-    impure function FillWithZeroes return RamType is
-       variable RAM : RamType;
-    begin
-       for I in RamType'range loop
-          RAM(I) := to_unsigned(0, data_bits);
-       end loop;
-       return RAM;
-    end function;
-
-signal RAM : RamType := FillWithZeroes;
+signal RAM : RamType := (others => (others => '0'));
 attribute ram_type : string;
 attribute ram_type of RAM : signal is "block";
 begin

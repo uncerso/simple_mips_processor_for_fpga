@@ -6,7 +6,8 @@ use ieee.numeric_std.all;
 entity mips_processor is
 generic(constant data_bits : Integer := 32;
         constant mem_address_bits : Integer := 8;
-        constant reg_address_bits : Integer := 5
+        constant reg_address_bits : Integer := 5;
+        constant word_base : Integer := 2
 );
 port(clk: in std_logic;
      reset: in std_logic
@@ -23,12 +24,22 @@ signal mem_write_data : unsigned(data_bits-1 downto 0);
 signal mem_write_enable : std_logic;
 begin
 
-IMEM : entity work.instruction_memory port map(
+IMEM : entity work.instruction_memory
+generic map(
+    address_bits => mem_address_bits,
+    instruction_bits => data_bits
+)
+port map(
     address => ip,
     read_data => read_instruction
 );
 
-DMEM : entity work.data_memory port map(
+DMEM : entity work.data_memory 
+generic map(
+    address_bits => mem_address_bits,
+    data_bits => data_bits
+)
+port map(
     clk => clk,
     reset => reset,
     address => mem_address,
@@ -37,7 +48,14 @@ DMEM : entity work.data_memory port map(
     write_enable => mem_write_enable
 );
 
-CORE: entity work.core port map(
+CORE: entity work.core
+generic map(
+    data_bits => data_bits,
+    mem_address_bits => mem_address_bits,
+    reg_address_bits => reg_address_bits,
+    word_base => word_base
+)
+port map(
     clk => clk,
     reset => reset,
     ip => ip,
