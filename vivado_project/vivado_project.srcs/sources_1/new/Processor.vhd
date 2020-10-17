@@ -24,17 +24,7 @@ signal mem_write_data : unsigned(data_bits-1 downto 0);
 signal mem_write_enable : std_logic;
 begin
 
-IMEM : entity work.instruction_memory
-generic map(
-    address_bits => mem_address_bits,
-    instruction_bits => data_bits
-)
-port map(
-    address => ip(mem_address_bits + word_base - 1 downto word_base),
-    read_data => read_instruction
-);
-
-DMEM : entity work.data_memory 
+MEM : entity work.data_memory 
 generic map(
     address_bits => mem_address_bits,
     data_bits => data_bits
@@ -42,8 +32,11 @@ generic map(
 port map(
     clk => clk,
     reset => reset,
-    address => mem_address(mem_address_bits + word_base - 1 downto word_base),
-    read_data => mem_read_data,
+    address_1 => ip(mem_address_bits + word_base - 1 downto word_base),
+    address_2 => mem_address(mem_address_bits + word_base - 1 downto word_base),
+    write_address => mem_address(mem_address_bits + word_base - 1 downto word_base),
+    read_data_1 => read_instruction,
+    read_data_2 => mem_read_data,
     write_data => mem_write_data,
     write_enable => mem_write_enable
 );
