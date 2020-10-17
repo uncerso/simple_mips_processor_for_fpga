@@ -65,6 +65,7 @@ port map(
     reg_address => reg_address,
     write_mem_to_reg => write_mem_to_reg,
     reg_jump_target => reg_jump_target,
+    use_zero_ext => use_zero_ext,
     branch => branch,
     jump => jump
 );
