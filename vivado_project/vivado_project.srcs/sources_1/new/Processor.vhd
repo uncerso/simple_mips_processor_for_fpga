@@ -9,8 +9,11 @@ generic(constant data_bits        : Natural := 32;
         constant reg_address_bits : Natural := 5;
         constant word_base        : Natural := 2
 );
-port(clk: in std_logic;
-     reset: in std_logic
+port(
+    address_3 : in  unsigned(mem_address_bits-1 downto 0);
+    read_data_3 : out unsigned(data_bits-1    downto 0);
+    clk: in std_logic;
+    reset: in std_logic
 );
 end entity;
 
@@ -33,9 +36,11 @@ port map(
     reset => reset,
     address_1 => ip(mem_address_bits + word_base - 1 downto word_base),
     address_2 => mem_address(mem_address_bits + word_base - 1 downto word_base),
+    address_3 => address_3,
     write_address => mem_address(mem_address_bits + word_base - 1 downto word_base),
     read_data_1 => read_instruction,
     read_data_2 => mem_read_data,
+    read_data_3 => read_data_3,
     write_data => mem_write_data,
     write_enable => mem_write_enable
 );

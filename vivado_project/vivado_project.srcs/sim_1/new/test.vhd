@@ -9,7 +9,7 @@ signal clk   : std_logic;
 signal reset : std_logic := '1';
 
 begin
-DUT : entity work.mips_processor port map(clk => clk, reset => reset);
+DUT : entity work.mips_processor port map(clk => clk, reset => reset, address_3 => to_unsigned(0, 8));
 
 process is begin
     clk <= '0';
