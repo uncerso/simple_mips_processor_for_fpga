@@ -4,29 +4,29 @@ use ieee.numeric_std.all;
 use work.alu_modes.all;
 
 entity core is
-generic (data_bits        : Integer;
-         reg_address_bits : Integer;
+generic (data_bits        : Natural;
+         reg_address_bits : Natural;
          word_base        : Natural
 );
 
 port (
-    clk  : in std_logic;
-    reset: in std_logic;
-    ip   : out unsigned(data_bits-1 downto 0);
-    instruction : in unsigned(data_bits-1 downto 0);
-    read_data   : in unsigned(data_bits-1 downto 0);
-    write_data  : out unsigned(data_bits-1 downto 0);
-    mem_address     : out unsigned(data_bits-1 downto 0);
+    clk              : in  std_logic;
+    reset            : in  std_logic;
+    ip               : out unsigned(data_bits-1 downto 0);
+    instruction      : in  unsigned(data_bits-1 downto 0);
+    read_data        : in  unsigned(data_bits-1 downto 0);
+    write_data       : out unsigned(data_bits-1 downto 0);
+    mem_address      : out unsigned(data_bits-1 downto 0);
     mem_write_enable : out std_logic
     );
 end entity;
 
 architecture core_arch of core is
-constant operation_bits   : Integer := 6;
-constant imm_bits         : Integer := 16;
-constant r1_pos : Integer := data_bits - operation_bits;
-constant r2_pos : Integer := r1_pos - reg_address_bits;
-constant r3_pos : Integer := r2_pos - reg_address_bits;
+constant operation_bits   : Natural := 6;
+constant imm_bits         : Natural := 16;
+constant r1_pos : Natural := data_bits - operation_bits;
+constant r2_pos : Natural := r1_pos - reg_address_bits;
+constant r3_pos : Natural := r2_pos - reg_address_bits;
 
 signal ext_imm            : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 signal register_data_1    : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
@@ -130,10 +130,15 @@ port map (
               else to_unsigned(2 ** word_base, data_bits);     
 
     r2_is_zero <= '1' when instruction(r2_pos-1 downto r2_pos-reg_address_bits) = 0 else '0';
+
     reg_write_data <= read_data when write_mem_to_reg = '1' else alu_result; -- when lw instruction
+
     reg_write_address <= instruction(r3_pos-1 downto r3_pos-reg_address_bits) when reg_address = '1'
                     else instruction(r2_pos-1 downto r2_pos-reg_address_bits);
+
     right_alu_argument <= register_data_2 when alu_src = '1' else ext_imm; -- when R-type instruction
+
     mem_address <= alu_result;
+
     write_data <= register_data_2;
 end core_arch;

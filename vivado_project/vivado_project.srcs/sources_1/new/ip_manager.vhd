@@ -5,13 +5,13 @@ use ieee.numeric_std.all;
 entity ip_manager is
 generic(data_bits : Natural);
 port(
-    clk   : in std_logic;
-    reset : in std_logic;
-    delay : in std_logic;
-    offset: in unsigned(data_bits-1 downto 0);
-    target: in unsigned(data_bits-1 downto 0);
-    use_target : in std_logic;
-    ip    : out unsigned(data_bits-1 downto 0)
+    clk        : in  std_logic;
+    reset      : in  std_logic;
+    delay      : in  std_logic;
+    offset     : in  unsigned(data_bits-1 downto 0);
+    target     : in  unsigned(data_bits-1 downto 0);
+    use_target : in  std_logic;
+    ip         : out unsigned(data_bits-1 downto 0)
 );
 end entity;
 

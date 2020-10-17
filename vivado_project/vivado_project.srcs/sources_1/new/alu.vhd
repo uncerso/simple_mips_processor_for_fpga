@@ -8,7 +8,7 @@ use ieee.numeric_std.all;
 use work.alu_modes.all;
 
 entity alu is
-generic(data_bits : integer);
+generic(data_bits : Natural);
 port(lhs, rhs : in  unsigned(data_bits-1 downto 0);
      result   : out unsigned(data_bits-1 downto 0);
      mode     : in  modes;
@@ -19,7 +19,7 @@ end entity;
 architecture alu_arch of alu is
 signal tmp_res : unsigned(data_bits-1 downto 0);
 
-impure function int(b : boolean) return integer is begin 
+impure function int(b : boolean) return Natural is begin 
     if b then return 1; else return 0; end if;
 end function;
 

@@ -4,8 +4,8 @@ use ieee.numeric_std.all;
 use std.textio.all;
 
 entity data_memory is 
-generic(address_bits : Integer;
-        data_bits    : Integer
+generic(address_bits : Natural;
+        data_bits    : Natural
 );
 port(
     address_1     : in  unsigned(address_bits-1 downto 0);
@@ -14,14 +14,14 @@ port(
     read_data_1   : out unsigned(data_bits-1    downto 0);
     read_data_2   : out unsigned(data_bits-1    downto 0);
     write_data    : in  unsigned(data_bits-1    downto 0);
-    write_enable  : in std_logic;
-    clk           : in std_logic;
-    reset         : in std_logic
+    write_enable  : in  std_logic;
+    clk           : in  std_logic;
+    reset         : in  std_logic
 );
 end entity;
 
 architecture data_memory_arch of data_memory is 
-   constant ram_size : Integer := (2**address_bits);
+   constant ram_size : Natural := (2**address_bits);
    type RamType is array(0 to ram_size-1) of unsigned(data_bits-1 downto 0);
 
    -- https://stackoverflow.com/questions/10555729/bram-init-in-vhdl

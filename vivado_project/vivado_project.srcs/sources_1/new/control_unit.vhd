@@ -4,8 +4,8 @@ use ieee.numeric_std.all;
 use work.alu_modes.all;
 
 entity control_unit is
-generic (data_bits      : Integer;
-         operation_bits : Integer
+generic (data_bits      : Natural;
+         operation_bits : Natural
 );
 
 port(opcode           : in  unsigned(operation_bits-1 downto 0);

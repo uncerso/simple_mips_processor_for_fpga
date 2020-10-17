@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity test is end test;
 
 architecture test_arch of test is
-signal clk : std_logic; 
+signal clk   : std_logic; 
 signal reset : std_logic := '1';
 
 begin
