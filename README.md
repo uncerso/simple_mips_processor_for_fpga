@@ -1,20 +1,14 @@
 # simple_mips_processor_for_fpga
-Implementation of mips processor for fpga with assembler for it
-
-# Build assembler
-<code> make build </code>
-
-# Usage
-<code> ./ram_maker mips_test.asm ram.data </code>
+Implementation of mips processor for fpga
 
 # Supported mips instructions
-- [x] add
-- [x] addi
+- [x] add, addi, addiu
+- [x] xor, xori
 - [x] sub
 - [x] or
 - [x] and
-- [x] lw
-- [x] sw
-- [x] beq (immediate argument is absolute address)
-- [x] slt
-- [x] j
+- [x] lw, sw
+- [x] beq
+- [x] slt, slti, sltiu
+- [x] movz, movn
+- [x] j, jr
