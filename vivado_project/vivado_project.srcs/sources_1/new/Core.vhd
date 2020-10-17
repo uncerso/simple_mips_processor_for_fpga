@@ -5,19 +5,18 @@ use work.alu_modes.all;
 
 entity core is
 generic (data_bits        : Integer;
-         mem_address_bits : Integer;
          reg_address_bits : Integer;
-         word_base        : Integer
+         word_base        : Natural
 );
 
 port (
     clk  : in std_logic;
     reset: in std_logic;
-    ip   : out unsigned(mem_address_bits-1 downto 0);
+    ip   : out unsigned(data_bits-1 downto 0);
     instruction : in unsigned(data_bits-1 downto 0);
     read_data   : in unsigned(data_bits-1 downto 0);
     write_data  : out unsigned(data_bits-1 downto 0);
-    mem_address     : out unsigned(mem_address_bits-1 downto 0);
+    mem_address     : out unsigned(data_bits-1 downto 0);
     mem_write_enable : out std_logic
     );
 end entity;
@@ -29,7 +28,6 @@ constant r1_pos : Integer := data_bits - operation_bits;
 constant r2_pos : Integer := r1_pos - reg_address_bits;
 constant r3_pos : Integer := r2_pos - reg_address_bits;
 
-signal instruction_pointer: unsigned(mem_address_bits-1 downto 0) := to_unsigned(0, mem_address_bits);
 signal ext_imm            : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 signal register_data_1    : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 signal register_data_2    : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
@@ -47,6 +45,9 @@ signal jump               : std_logic;
 signal r2_is_zero         : std_logic;
 signal use_zero_ext       : std_logic;
 signal alu_mode           : modes;
+signal target_ip          : unsigned(data_bits-1 downto 0);
+signal offset_ip          : unsigned(data_bits-1 downto 0);
+signal reg_jump_target    : std_logic;
 begin
 CUNIT : entity work.control_unit
 generic map(
@@ -63,6 +64,7 @@ port map(
     alu_src => alu_src,
     reg_address => reg_address,
     write_mem_to_reg => write_mem_to_reg,
+    reg_jump_target => reg_jump_target,
     branch => branch,
     jump => jump
 );
@@ -107,24 +109,31 @@ port map(
     zero => zero_alu_result
 );
 
-    process (clk) is begin
-        if (clk'event and clk = '1') then
-            if (reset = '1') then
-                instruction_pointer <= to_unsigned(0, mem_address_bits);
-            elsif jump = '1' or (branch = '1' and zero_alu_result = '1') then
-                instruction_pointer <= ext_imm(mem_address_bits-1 downto 0);
-            elsif instruction /= 0 then
-                instruction_pointer <= instruction_pointer + 1;
-            end if;
-        end if;
-    end process;
+IPMANAGER: entity work.ip_manager
+generic map (
+    data_bits => data_bits
+)
+port map (
+    clk => clk,
+    reset => reset,
+    delay => reg_jump_target,
+    offset => offset_ip,
+    target => target_ip,
+    use_target => jump,
+    ip => ip
+);
+
+    target_ip <= register_data_1 when reg_jump_target = '1'
+              else shift_left(ext_imm, word_base);
+
+    offset_ip <= target_ip when branch = '1' and zero_alu_result = '1'
+              else to_unsigned(2 ** word_base, data_bits);     
 
     r2_is_zero <= '1' when instruction(r2_pos-1 downto r2_pos-reg_address_bits) = 0 else '0';
     reg_write_data <= read_data when write_mem_to_reg = '1' else alu_result; -- when lw instruction
-    reg_write_address <= instruction(r3_pos-1 downto r3_pos-reg_address_bits) when reg_address = '1' -- when R-type instruction
+    reg_write_address <= instruction(r3_pos-1 downto r3_pos-reg_address_bits) when reg_address = '1'
                     else instruction(r2_pos-1 downto r2_pos-reg_address_bits);
     right_alu_argument <= register_data_2 when alu_src = '1' else ext_imm; -- when R-type instruction
-    mem_address <= alu_result(mem_address_bits-1+word_base downto word_base); -- truncate and convert from address 'in bytes' to address 'in words'
+    mem_address <= alu_result;
     write_data <= register_data_2;
-    ip <= instruction_pointer;
 end core_arch;

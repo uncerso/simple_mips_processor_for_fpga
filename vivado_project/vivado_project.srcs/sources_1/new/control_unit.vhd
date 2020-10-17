@@ -19,6 +19,7 @@ port(opcode           : in  unsigned(operation_bits-1 downto 0);
      branch           : out std_logic;
      jump             : out std_logic;
      use_zero_ext     : out std_logic;
+     reg_jump_target  : out std_logic;
      alu_mode         : out modes
 );
 end entity;
@@ -56,12 +57,14 @@ begin
     branch <= '1' when opcode = 4 -- beq
               else '0';
               
-    jump <= '1' when opcode = 2 -- j
+    jump <= '1' when opcode = 2 or (opcode = 0 and funct = 8) -- j or jr
               else '0';
+
+    reg_jump_target <= '1' when opcode = 0 and funct = 8 -- jr
+                    else '0';
     
     use_zero_ext <= '1' when opcode = 14 or opcode = 11 -- xori or sltiu
                     else '0';
-    
     
     alu_mode <= m_add when opcode = 0 and funct = 32 else -- add
                 m_and when opcode = 0 and funct = 36 else -- and

@@ -5,20 +5,21 @@
    <db_ref_list>
       <db_ref path="test_behav.wdb" id="1">
          <top_modules>
+            <top_module name="alu_modes" />
             <top_module name="test" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="159309fs"></ZoomEndTime>
+      <ZoomStartTime time="942500fs"></ZoomStartTime>
+      <ZoomEndTime time="1011501fs"></ZoomEndTime>
       <Cursor1Time time="1000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="175"></NameColumnWidth>
-      <ValueColumnWidth column_width="138"></ValueColumnWidth>
+      <ValueColumnWidth column_width="134"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="15" />
+   <WVObjectSize size="10" />
    <wvobject type="logic" fp_name="/test/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -28,16 +29,20 @@
       <obj_property name="ObjectShortName">reset</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test/DUT/ip">
-      <obj_property name="ElementShortName">ip[7:0]</obj_property>
-      <obj_property name="ObjectShortName">ip[7:0]</obj_property>
+      <obj_property name="ElementShortName">ip[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ip[31:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test/DUT/read_instruction">
       <obj_property name="ElementShortName">read_instruction[31:0]</obj_property>
       <obj_property name="ObjectShortName">read_instruction[31:0]</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/test/DUT/CORE/ext_imm">
+      <obj_property name="ElementShortName">ext_imm[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ext_imm[31:0]</obj_property>
+   </wvobject>
    <wvobject type="array" fp_name="/test/DUT/mem_address">
-      <obj_property name="ElementShortName">mem_address[7:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_address[7:0]</obj_property>
+      <obj_property name="ElementShortName">mem_address[31:0]</obj_property>
+      <obj_property name="ObjectShortName">mem_address[31:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test/DUT/mem_read_data">
       <obj_property name="ElementShortName">mem_read_data[31:0]</obj_property>
@@ -47,36 +52,12 @@
       <obj_property name="ElementShortName">mem_write_data[31:0]</obj_property>
       <obj_property name="ObjectShortName">mem_write_data[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/CORE/sign_imm">
-      <obj_property name="ElementShortName">sign_imm[31:0]</obj_property>
-      <obj_property name="ObjectShortName">sign_imm[31:0]</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/test/DUT/CORE/REGS/RAM">
       <obj_property name="ElementShortName">RAM[0:31][31:0]</obj_property>
       <obj_property name="ObjectShortName">RAM[0:31][31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/DMEM/RAM">
-      <obj_property name="ElementShortName">RAM[0:255][31:0]</obj_property>
-      <obj_property name="ObjectShortName">RAM[0:255][31:0]</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/test/DUT/DMEM/RAM[21]">
       <obj_property name="ElementShortName">[21][31:0]</obj_property>
       <obj_property name="ObjectShortName">[21][31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/CORE/CUNIT/reg_write_enable">
-      <obj_property name="ElementShortName">reg_write_enable</obj_property>
-      <obj_property name="ObjectShortName">reg_write_enable</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/CORE/CUNIT/mem_write_enable">
-      <obj_property name="ElementShortName">mem_write_enable</obj_property>
-      <obj_property name="ObjectShortName">mem_write_enable</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/CORE/CUNIT/opcode">
-      <obj_property name="ElementShortName">opcode[5:0]</obj_property>
-      <obj_property name="ObjectShortName">opcode[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/CORE/CUNIT/funct">
-      <obj_property name="ElementShortName">funct[5:0]</obj_property>
-      <obj_property name="ObjectShortName">funct[5:0]</obj_property>
    </wvobject>
 </wave_config>
