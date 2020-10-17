@@ -16,3 +16,5 @@ build_test:
 	mips-unknown-elf-as -mips32 max_test.s
 	mips-unknown-elf-ld -mips32 -T script.ld a.out -o c.out
 	mips-unknown-elf-objcopy -O binary c.out c.bin
+	python -c "for i in input(): print(\"{0:04b}\".format(int(i, 16)), end=\"\")" <<< `hexdump -v -e '1/1 "%02X"' c.bin` > ram.data
+	rm c.bin c.out a.out max_test.s

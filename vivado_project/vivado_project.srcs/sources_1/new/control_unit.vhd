@@ -30,7 +30,7 @@ begin
                          else '0';
 
     process (opcode, funct, r2_is_zero) is begin
-        if opcode = 35 or opcode = 8 or opcode = 9 or opcode = 10 then -- lw or addi or addiu or slti
+        if opcode = 35 or opcode = 8 or opcode = 9 or opcode = 10 or opcode = 11 or opcode = 14 then -- lw or addi or addiu or slti or sltiu or xori
             reg_write_enable <= '1';
         elsif opcode = 0 then -- R-type
             if funct = 11 then    -- moven

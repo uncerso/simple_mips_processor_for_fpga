@@ -129,7 +129,7 @@ port map (
     offset_ip <= target_ip when branch = '1' and zero_alu_result = '1'
               else to_unsigned(2 ** word_base, data_bits);     
 
-    r2_is_zero <= '1' when instruction(r2_pos-1 downto r2_pos-reg_address_bits) = 0 else '0';
+    r2_is_zero <= '1' when register_data_2 = 0 else '0';
 
     reg_write_data <= read_data when write_mem_to_reg = '1' else alu_result; -- when lw instruction
 
