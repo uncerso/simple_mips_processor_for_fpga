@@ -8,6 +8,7 @@ port(
     clk        : in  std_logic;
     reset      : in  std_logic;
     delay      : in  std_logic;
+    step       : in  unsigned(data_bits-1 downto 0);
     offset     : in  unsigned(data_bits-1 downto 0);
     target     : in  unsigned(data_bits-1 downto 0);
     use_target : in  std_logic;
@@ -30,14 +31,20 @@ begin
              elsif delayed = '1' then
                 instruction_pointer <= delay_slot;
                 delayed <= '0';
-             elsif use_target = '0' then
-                instruction_pointer <= instruction_pointer + offset;
              elsif delay = '1' then
                 delayed <= '1';
-                delay_slot <= target;
-                instruction_pointer <= instruction_pointer + offset;
+                if use_target = '1' then
+                     delay_slot <= target;
+                else
+                     delay_slot <= instruction_pointer + offset;
+                end if;
+                instruction_pointer <= instruction_pointer + step;
              else
-                instruction_pointer <= target;
+                if use_target = '1' then
+                     instruction_pointer <= target;
+                else
+                     instruction_pointer <= instruction_pointer + offset;
+                end if;
              end if;
         end if;
     end process;

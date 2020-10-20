@@ -16,7 +16,8 @@ port(opcode           : in  unsigned(operation_bits-1 downto 0);
      alu_src          : out std_logic;
      reg_address      : out std_logic;
      write_mem_to_reg : out std_logic;
-     branch           : out std_logic;
+     branch_eq        : out std_logic;
+     branch_ne        : out std_logic;
      jump             : out std_logic;
      use_zero_ext     : out std_logic;
      reg_jump_target  : out std_logic;
@@ -30,7 +31,7 @@ begin
                          else '0';
 
     process (opcode, funct, r2_is_zero) is begin
-        if opcode = 35 or opcode = 8 or opcode = 9 or opcode = 10 or opcode = 11 or opcode = 14 then -- lw or addi or addiu or slti or sltiu or xori
+        if opcode = 35 or opcode = 3 or (8 <= opcode and opcode <= 14) then -- lw or jal or (addi addiu slti sltiu andi ori xori)
             reg_write_enable <= '1';
         elsif opcode = 0 then -- R-type
             if funct = 11 then    -- moven
@@ -45,7 +46,7 @@ begin
         end if;
     end process;
 
-    alu_src <= '1' when opcode = 0 or opcode = 4 -- R-type or beq
+    alu_src <= '1' when opcode = 0 or opcode = 4 or opcode = 5 -- R-type or beq or bne
                else '0';
 
     reg_address <= '1' when opcode = 0 -- R-type
@@ -54,10 +55,13 @@ begin
     write_mem_to_reg <= '1' when opcode = 35 -- lw
                         else '0';
                    
-    branch <= '1' when opcode = 4 -- beq
+    branch_eq <= '1' when opcode = 4 -- beq
               else '0';
-              
-    jump <= '1' when opcode = 2 or (opcode = 0 and funct = 8) -- j or jr
+
+    branch_ne <= '1' when opcode = 5 -- bne
+              else '0';
+
+    jump <= '1' when opcode = 2 or opcode = 3 or (opcode = 0 and funct = 8) -- j or jal or jr
               else '0';
 
     reg_jump_target <= '1' when opcode = 0 and funct = 8 -- jr
@@ -67,9 +71,10 @@ begin
                     else '0';
     
     alu_mode <= m_add when opcode = 0 and funct = 32 else -- add
-                m_and when opcode = 0 and funct = 36 else -- and
-                m_or  when opcode = 0 and funct = 37 else -- or
-                m_sub when opcode = 4 or  (opcode = 0 and funct = 34) else -- beq or sub
+                m_sll when opcode = 0 and funct = 0  else -- sll
+                m_and when opcode = 12 or (opcode = 0 and funct = 36) else -- andi or and
+                m_or  when opcode = 13 or (opcode = 0 and funct = 37) else -- ori or or
+                m_sub when opcode = 4 or  opcode = 5 or (opcode = 0 and funct = 34) else -- beq or bne or sub
                 m_sl  when opcode = 10 or (opcode = 0 and funct = 42) else -- slti or slt
                 m_xor when opcode = 14 or (opcode = 0 and funct = 38) else -- xori or xor
                 m_lhs when opcode = 0 and (funct = 10 or  funct = 11) else -- movz or movn

@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="369744fs"></ZoomStartTime>
-      <ZoomEndTime time="454052fs"></ZoomEndTime>
-      <Cursor1Time time="410076fs"></Cursor1Time>
+      <ZoomStartTime time="913664fs"></ZoomStartTime>
+      <ZoomEndTime time="1017268fs"></ZoomEndTime>
+      <Cursor1Time time="1000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="175"></NameColumnWidth>
-      <ValueColumnWidth column_width="130"></ValueColumnWidth>
+      <ValueColumnWidth column_width="126"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="18" />
+   <WVObjectSize size="23" />
    <wvobject type="logic" fp_name="/test/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -52,17 +52,37 @@
       <obj_property name="ElementShortName">mem_write_data[31:0]</obj_property>
       <obj_property name="ObjectShortName">mem_write_data[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/CORE/CUNIT/opcode">
-      <obj_property name="ElementShortName">opcode[5:0]</obj_property>
-      <obj_property name="ObjectShortName">opcode[5:0]</obj_property>
+   <wvobject type="array" fp_name="/test/DUT/CORE/IPMANAGER/instruction_pointer">
+      <obj_property name="ElementShortName">instruction_pointer[31:0]</obj_property>
+      <obj_property name="ObjectShortName">instruction_pointer[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/CORE/CUNIT/funct">
-      <obj_property name="ElementShortName">funct[5:0]</obj_property>
-      <obj_property name="ObjectShortName">funct[5:0]</obj_property>
+   <wvobject type="logic" fp_name="/test/DUT/CORE/IPMANAGER/delay">
+      <obj_property name="ElementShortName">delay</obj_property>
+      <obj_property name="ObjectShortName">delay</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/CORE/reg_write_enable">
-      <obj_property name="ElementShortName">reg_write_enable</obj_property>
-      <obj_property name="ObjectShortName">reg_write_enable</obj_property>
+   <wvobject type="array" fp_name="/test/DUT/CORE/IPMANAGER/offset">
+      <obj_property name="ElementShortName">offset[31:0]</obj_property>
+      <obj_property name="ObjectShortName">offset[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test/DUT/CORE/IPMANAGER/target">
+      <obj_property name="ElementShortName">target[31:0]</obj_property>
+      <obj_property name="ObjectShortName">target[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/CORE/IPMANAGER/use_target">
+      <obj_property name="ElementShortName">use_target</obj_property>
+      <obj_property name="ObjectShortName">use_target</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test/DUT/CORE/IPMANAGER/ip">
+      <obj_property name="ElementShortName">ip[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ip[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/CORE/IPMANAGER/delayed">
+      <obj_property name="ElementShortName">delayed</obj_property>
+      <obj_property name="ObjectShortName">delayed</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test/DUT/CORE/IPMANAGER/delay_slot">
+      <obj_property name="ElementShortName">delay_slot[31:0]</obj_property>
+      <obj_property name="ObjectShortName">delay_slot[31:0]</obj_property>
    </wvobject>
    <wvobject type="other" fp_name="/test/DUT/CORE/MALU/mode">
       <obj_property name="ElementShortName">mode</obj_property>

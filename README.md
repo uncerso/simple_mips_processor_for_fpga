@@ -5,10 +5,12 @@ Implementation of mips processor for fpga
 - [x] add, addi, addiu
 - [x] xor, xori
 - [x] sub
-- [x] or
-- [x] and
+- [x] or, ori
+- [x] and, andi
+- [x] sll
+- [x] nop
 - [x] lw, sw
-- [x] beq
+- [x] beq, bne, b, bnez
 - [x] slt, slti, sltiu
 - [x] movz, movn
-- [x] j, jr
+- [x] j, jr, jal

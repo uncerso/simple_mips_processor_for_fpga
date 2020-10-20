@@ -15,6 +15,6 @@ end entity;
 architecture imm_extender_arch of imm_extender is
 begin
 
-    outp <= resize(inp, ext_to) when use_zero_ext = '0' else
+    outp <= resize(inp, ext_to) when use_zero_ext = '1' else
             unsigned(resize(signed(inp), ext_to));
 end imm_extender_arch;
