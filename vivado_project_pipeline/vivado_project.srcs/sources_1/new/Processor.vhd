@@ -24,9 +24,13 @@ constant operation_bits   : Natural := 6;
 constant r1_pos : Natural := data_bits - operation_bits;
 constant r2_pos : Natural := r1_pos - reg_address_bits;
 constant r3_pos : Natural := r2_pos - reg_address_bits;
+constant step   : unsigned(data_bits-1 downto 0) := to_unsigned(2 ** word_base, data_bits);
 
+signal suspend_pipeline    : std_logic;
+signal early_detected_jump : std_logic;
+signal early_opcode        : unsigned(operation_bits-1 downto 0);
+signal early_funct         : unsigned(operation_bits-1 downto 0);
 
-signal step             : unsigned(data_bits-1 downto 0) := to_unsigned(2 ** word_base, data_bits);
 signal reg_address_1    : unsigned(reg_address_bits-1 downto 0);
 signal reg_address_2    : unsigned(reg_address_bits-1 downto 0);
 signal reg_data_1       : unsigned(data_bits-1 downto 0);
@@ -114,7 +118,7 @@ generic map(
 )
 port map(
     ip => ip_f,
-    suspend => write_mem_to_reg_d,
+    suspend => suspend_pipeline,
     jump => jump_d,
     branch_eq => branch_eq_d,
     branch_ne => branch_ne_d,
@@ -180,9 +184,9 @@ port map (
     register_data_1 => register_data_1_de,
     register_data_2 => register_data_2_de,
 
-    reg_write_enable_m => reg_write_enable_em,
-    reg_write_address_m => reg_write_address_em,
-    register_data_m => reg_write_data,
+    reg_write_enable_em => reg_write_enable_em,
+    reg_write_address_em => reg_write_address_em,
+    register_data_em => alu_result_em,
 
     clk => clk,
     reset => reset
@@ -206,18 +210,25 @@ port map(
 );
 
 -- writeback stage
+-- FIX: calc jal case as alu_result, (breaks 31 reg)
 reg_write_data <= (ip_em + step + step) when jump_em = '1' and reg_write_enable_em = '1' -- jal
                else mem_read_data_m when write_mem_to_reg_em = '1' -- lw
                else alu_result_em;
 
 -- conflict solving
-reg_data_1_bypassed <= alu_result_e   when reg_write_enable_de = '1' and reg_write_address_de = reg_address_1 else
-                       reg_write_data  when reg_write_enable_em = '1' and reg_write_address_em = reg_address_1 else
+reg_data_1_bypassed <= reg_write_data  when reg_write_enable_em = '1' and reg_write_address_em = reg_address_1 else
                        reg_data_1;
                        
-reg_data_2_bypassed <= alu_result_e   when reg_write_enable_de = '1' and reg_write_address_de = reg_address_2 else
-                       reg_write_data  when reg_write_enable_em = '1' and reg_write_address_em = reg_address_2 else
+reg_data_2_bypassed <= reg_write_data  when reg_write_enable_em = '1' and reg_write_address_em = reg_address_2 else
                        reg_data_2;
+
+early_opcode <= instruction_f(data_bits - 1 downto data_bits - operation_bits);
+early_funct <= instruction_f(operation_bits-1 downto 0);
+early_detected_jump <=  '1' when early_opcode = 4 or early_opcode = 5 or (early_opcode = 0 and early_funct = 8) -- branch_eq or branch_ne
+                   else '0';
+
+suspend_pipeline <= write_mem_to_reg_d or early_detected_jump;
+
 
 process (clk, reset) is begin
     if (clk'event and clk = '1') then

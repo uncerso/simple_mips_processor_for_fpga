@@ -12,8 +12,8 @@ generic(data_bits : Natural; shift_bits : Natural);
 port(lhs, rhs : in  unsigned(data_bits-1 downto 0);
      shift    : in unsigned(shift_bits-1 downto 0);
      result   : out unsigned(data_bits-1 downto 0);
-     mode     : in  modes;
-     zero     : out std_logic
+ --     zero     : out std_logic;
+     mode     : in  modes
 );
 end entity;
 
@@ -25,7 +25,7 @@ impure function int(b : boolean) return Natural is begin
 end function;
 
 begin
-    process (lhs, rhs, mode) is begin
+    process (lhs, rhs, mode, shift) is begin
         case mode is
         when m_lhs => tmp_res <= lhs;
         when m_add => tmp_res <= lhs  +  rhs;
@@ -40,5 +40,5 @@ begin
     end process;
 
     result <= tmp_res;
-    zero <= '1' when tmp_res = 0 else '0';
+--    zero <= '1' when tmp_res = 0 else '0';
 end alu_arch;

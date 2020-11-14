@@ -21,7 +21,6 @@ port(
     jump : out std_logic;
     branch_eq : out std_logic;
     branch_ne : out std_logic;
-    zero_alu_result : out std_logic;
     reg_jump_target : out std_logic;
     ext_imm         : out unsigned(data_bits-1 downto 0);
     
