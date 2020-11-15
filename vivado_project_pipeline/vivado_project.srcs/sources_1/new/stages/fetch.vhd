@@ -8,7 +8,7 @@ generic(data_bits        : Natural;
 );
 port(
     ip : out  unsigned(data_bits-1 downto 0);
-    suspend : in std_logic;
+    suspend : in std_logic_vector(1 downto 0);
     jump : in std_logic;
     branch_eq : in std_logic;
     branch_ne : in std_logic;
@@ -16,6 +16,7 @@ port(
     reg_jump_target : in std_logic;
     ext_imm         : in unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
     register_data_1 : in unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+    ignore_suspend : out std_logic;
 
     clk: in std_logic;
     reset: in std_logic
@@ -40,7 +41,8 @@ port map (
     offset => offset_ip,
     target => target_ip,
     use_target => jump,
-    ip => ip
+    ip => ip,
+    ignore_suspend => ignore_suspend
 );
 
     target_ip <= register_data_1 when reg_jump_target = '1'
