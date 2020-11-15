@@ -24,7 +24,7 @@ constant operation_bits   : Natural := 6;
 constant r1_pos : Natural := data_bits - operation_bits;
 constant r2_pos : Natural := r1_pos - reg_address_bits;
 constant r3_pos : Natural := r2_pos - reg_address_bits;
-constant step   : unsigned(data_bits-1 downto 0) := to_unsigned(2 ** word_base, data_bits);
+constant two_steps   : unsigned(data_bits-1 downto 0) := to_unsigned(2 ** (word_base+1), data_bits);
 
 signal suspend_pipeline    : std_logic;
 signal early_detected_jump : std_logic;
@@ -53,8 +53,6 @@ signal branch_ne_d : std_logic;
 signal regs_are_equal_d : std_logic;
 signal reg_jump_target_d : std_logic;
 signal ext_imm_d         : unsigned(data_bits-1 downto 0);
-signal reg_write_address_d : unsigned(reg_address_bits-1 downto 0);
-signal reg_write_enable_d: std_logic;
 signal mem_write_enable_d: std_logic;
 signal right_alu_argument_d: unsigned(data_bits-1 downto 0);
 signal alu_mode_d : modes;
@@ -62,11 +60,10 @@ signal shift_d : unsigned(shift_bits - 1 downto 0);
 signal alu_src_is_reg_d : std_logic;
 
 signal ip_de : unsigned(data_bits-1 downto 0);
+signal instruction_de : unsigned(data_bits-1 downto 0);
 signal write_mem_to_reg_de : std_logic;
 signal jump_de : std_logic;
 signal ext_imm_de         : unsigned(data_bits-1 downto 0);
-signal reg_write_address_de : unsigned(reg_address_bits-1 downto 0);
-signal reg_write_enable_de: std_logic;
 signal mem_write_enable_de: std_logic;
 signal reg_address_1_de    : unsigned(reg_address_bits-1 downto 0);
 signal reg_address_2_de    : unsigned(reg_address_bits-1 downto 0);
@@ -76,8 +73,11 @@ signal alu_mode_de : modes;
 signal shift_de : unsigned(shift_bits-1 downto 0);
 signal alu_src_is_reg_de : std_logic;
 
+signal reg_write_address_dd : unsigned(reg_address_bits-1 downto 0);
+signal reg_write_enable_dd: std_logic;
 signal alu_result_e : unsigned(data_bits-1 downto 0);
 signal mem_write_data_e : unsigned(data_bits-1 downto 0);
+signal real_reg2_data_e : unsigned(data_bits-1 downto 0);
 
 signal ip_em : unsigned(data_bits-1 downto 0);
 signal write_mem_to_reg_em : std_logic;
@@ -90,6 +90,9 @@ signal mem_write_data_em : unsigned(data_bits-1 downto 0);
 
 signal mem_read_data_m : unsigned(data_bits-1 downto 0);
 
+signal reg_write_address_mw : unsigned(reg_address_bits-1 downto 0);
+signal reg_write_enable_mw  : std_logic;
+signal reg_write_data_mw    : unsigned(data_bits-1 downto 0);
 begin
 
 MEM : entity work.data_memory 
@@ -153,9 +156,6 @@ port map(
     reg_jump_target => reg_jump_target_d,
     ext_imm => ext_imm_d,
     
-    reg_write_enable => reg_write_enable_d,
-
-    reg_write_address => reg_write_address_d,
     register_address_1 => reg_address_1,
     register_address_2 => reg_address_2,
     register_data_1 => reg_data_1_bypassed,
@@ -171,25 +171,47 @@ generic map (
     shift_bits => shift_bits
 )
 port map (
-    alu_mode => alu_mode_de,
-    alu_result => alu_result_e,
-    ext_imm => ext_imm_de,
-    shift => shift_de,
-    alu_src_is_reg => alu_src_is_reg_de,
+    alu_mode             => alu_mode_de,
+    alu_result           => alu_result_e,
+    ext_imm              => ext_imm_de,
+    shift                => shift_de,
+    alu_src_is_reg       => alu_src_is_reg_de,
     
-    mem_write_data => mem_write_data_e,
+    mem_write_data       => mem_write_data_e,
+    real_reg2_data       => real_reg2_data_e,
     
-    reg_address_1 => reg_address_1_de,
-    reg_address_2 => reg_address_2_de,
-    register_data_1 => register_data_1_de,
-    register_data_2 => register_data_2_de,
+    reg_address_1        => reg_address_1_de,
+    reg_address_2        => reg_address_2_de,
+    register_data_1      => register_data_1_de,
+    register_data_2      => register_data_2_de,
 
-    reg_write_enable_em => reg_write_enable_em,
+    reg_write_enable_em  => reg_write_enable_em,
     reg_write_address_em => reg_write_address_em,
-    register_data_em => alu_result_em,
+    register_data_em     => alu_result_em,
+    
+    reg_write_address_mw => reg_write_address_mw,
+    reg_write_enable_mw  => reg_write_enable_mw,
+    register_data_mw     => reg_write_data_mw,
+
 
     clk => clk,
     reset => reset
+);
+
+DelayedDecodeStage : entity work.delayed_decode_stage_function
+generic map(
+    data_bits => data_bits,
+    reg_address_bits => reg_address_bits,
+    r2_pos => r2_pos,
+    r3_pos => r3_pos,
+    operation_bits => operation_bits
+)
+port map(
+    second_reg => real_reg2_data_e,
+    instruction => instruction_de,
+    jump => jump_de,
+    reg_write_address => reg_write_address_dd,
+    reg_write_enable => reg_write_enable_dd
 );
 
 REGS : entity work.registers
@@ -211,8 +233,7 @@ port map(
 
 -- writeback stage
 -- FIX: calc jal case as alu_result, (breaks 31 reg)
-reg_write_data <= (ip_em + step + step) when jump_em = '1' and reg_write_enable_em = '1' -- jal
-               else mem_read_data_m when write_mem_to_reg_em = '1' -- lw
+reg_write_data <= mem_read_data_m when write_mem_to_reg_em = '1' -- lw
                else alu_result_em;
 
 -- conflict solving
@@ -237,11 +258,10 @@ process (clk, reset) is begin
             instruction_fd       <= to_unsigned(0, data_bits);
 
             ip_de                <= to_unsigned(0, data_bits);
+            instruction_de       <= to_unsigned(0, data_bits);
             write_mem_to_reg_de  <= '0';
             jump_de              <= '0';
             ext_imm_de           <= to_unsigned(0, data_bits);
-            reg_write_address_de <= to_unsigned(0, reg_address_bits);
-            reg_write_enable_de  <= '0';
             mem_write_enable_de  <= '0';
             reg_address_1_de     <= to_unsigned(0, reg_address_bits);
             reg_address_2_de     <= to_unsigned(0, reg_address_bits);
@@ -259,6 +279,11 @@ process (clk, reset) is begin
             mem_write_enable_em  <= '0';
             alu_result_em        <= to_unsigned(0, data_bits);
             mem_write_data_em    <= to_unsigned(0, data_bits);
+            
+            reg_write_address_mw <= to_unsigned(0, reg_address_bits);
+            reg_write_enable_mw  <= '0';
+            reg_write_data_mw    <= to_unsigned(0, data_bits);
+
         else
             ip_fd                <= ip_f;
             if write_mem_to_reg_d = '1' then
@@ -268,16 +293,15 @@ process (clk, reset) is begin
             end if;
 
             ip_de                <= ip_fd               ;
+            instruction_de       <= instruction_fd      ;
             write_mem_to_reg_de  <= write_mem_to_reg_d  ;
             jump_de              <= jump_d              ;
             ext_imm_de           <= ext_imm_d           ;
-            reg_write_address_de <= reg_write_address_d ;
-            reg_write_enable_de  <= reg_write_enable_d  ;
             mem_write_enable_de  <= mem_write_enable_d  ;
             reg_address_1_de     <= reg_address_1       ;
             reg_address_2_de     <= reg_address_2       ;
-            register_data_1_de   <= reg_data_1_bypassed ;
-            register_data_2_de   <= reg_data_2_bypassed ;
+            register_data_1_de   <= reg_data_1 ;
+            register_data_2_de   <= reg_data_2 ;
             alu_mode_de          <= alu_mode_d          ;
             shift_de             <= shift_d             ;
             alu_src_is_reg_de    <= alu_src_is_reg_d    ;
@@ -285,11 +309,20 @@ process (clk, reset) is begin
             ip_em                <= ip_de               ;
             write_mem_to_reg_em  <= write_mem_to_reg_de ;
             jump_em              <= jump_de             ;
-            reg_write_address_em <= reg_write_address_de;
-            reg_write_enable_em  <= reg_write_enable_de ;
+            reg_write_address_em <= reg_write_address_dd;
+            reg_write_enable_em  <= reg_write_enable_dd ;
             mem_write_enable_em  <= mem_write_enable_de ;
-            alu_result_em        <= alu_result_e        ;
             mem_write_data_em    <= mem_write_data_e    ;
+
+            if jump_de = '1' and reg_write_enable_dd = '1' then -- jal
+                alu_result_em    <= (ip_em + two_steps) ;
+            else
+                alu_result_em    <= alu_result_e        ;
+            end if;            
+            
+            reg_write_address_mw <= reg_write_address_em;
+            reg_write_enable_mw  <= reg_write_enable_em;
+            reg_write_data_mw    <= reg_write_data;
         end if;
     end if;
 end process;

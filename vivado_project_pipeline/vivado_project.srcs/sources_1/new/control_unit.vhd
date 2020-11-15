@@ -10,11 +10,8 @@ generic (data_bits      : Natural;
 
 port(opcode           : in  unsigned(operation_bits-1 downto 0);
      funct            : in  unsigned(operation_bits-1 downto 0);
-     r2_is_zero       : in  std_logic;
      mem_write_enable : out std_logic;
-     reg_write_enable : out std_logic;
      alu_src          : out std_logic;
-     reg_address      : out std_logic;
      write_mem_to_reg : out std_logic;
      branch_eq        : out std_logic;
      branch_ne        : out std_logic;
@@ -30,27 +27,8 @@ begin
     mem_write_enable <= '1' when opcode = 43  -- sw
                          else '0';
 
-    process (opcode, funct, r2_is_zero) is begin
-        if opcode = 35 or opcode = 3 or (8 <= opcode and opcode <= 14) then -- lw or jal or (addi addiu slti sltiu andi ori xori)
-            reg_write_enable <= '1';
-        elsif opcode = 0 then -- R-type
-            if funct = 11 then    -- moven
-                reg_write_enable <= not r2_is_zero;
-            elsif funct = 10 then -- movez
-                reg_write_enable <= r2_is_zero;
-            else                  -- other R-type instructions
-                reg_write_enable <= '1';
-            end if;
-        else
-            reg_write_enable <= '0';
-        end if;
-    end process;
-
     alu_src <= '1' when opcode = 0 or opcode = 4 or opcode = 5 -- R-type or beq or bne
                else '0';
-
-    reg_address <= '1' when opcode = 0 -- R-type
-                   else '0';
                    
     write_mem_to_reg <= '1' when opcode = 35 -- lw
                         else '0';

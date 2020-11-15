@@ -16,6 +16,7 @@ port(
     alu_src_is_reg   : in std_logic;
 
     mem_write_data   : out unsigned(data_bits-1 downto 0);
+    real_reg2_data   : out unsigned(data_bits-1 downto 0);
 
     reg_address_1    : in unsigned(reg_address_bits-1 downto 0);
     reg_address_2    : in unsigned(reg_address_bits-1 downto 0);
@@ -25,6 +26,10 @@ port(
     reg_write_enable_em  : in std_logic;
     reg_write_address_em : in unsigned(reg_address_bits-1 downto 0);
     register_data_em     : in unsigned(data_bits-1 downto 0);
+
+    reg_write_enable_mw  : in std_logic;
+    reg_write_address_mw : in unsigned(reg_address_bits-1 downto 0);
+    register_data_mw     : in unsigned(data_bits-1 downto 0);
 
     clk: in std_logic;
     reset: in std_logic
@@ -51,13 +56,16 @@ port map(
 );
 
 lhs <= register_data_em when reg_write_enable_em = '1' and reg_write_address_em = reg_address_1 else
+       register_data_mw when reg_write_enable_mw = '1' and reg_write_address_mw = reg_address_1 else
        register_data_1;
 
 reg <= register_data_em when reg_write_enable_em = '1' and reg_write_address_em = reg_address_2 else
-             register_data_2;
+       register_data_mw when reg_write_enable_mw = '1' and reg_write_address_mw = reg_address_2 else
+       register_data_2;
 
 rhs <= ext_imm when alu_src_is_reg = '0' else reg;
 
 mem_write_data <= reg;
+real_reg2_data <= reg;
 
 end execute_stage_arch;
