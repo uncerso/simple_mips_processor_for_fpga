@@ -12,7 +12,6 @@ generic(constant data_bits        : Natural := 32;
         constant shift_bits       : Natural := 5
 );
 port(
-    address_3 : in  unsigned(mem_address_bits-1 downto 0);
     read_data_3 : out unsigned(data_bits-1    downto 0);
     clk: in std_logic;
     reset: in std_logic
@@ -94,7 +93,6 @@ signal reg_write_address_mw : unsigned(reg_address_bits-1 downto 0);
 signal reg_write_enable_mw  : std_logic;
 signal reg_write_data_mw    : unsigned(data_bits-1 downto 0);
 
-signal ERROR_WTF : std_logic;
 begin
 
 MEM : entity work.data_memory 
@@ -107,7 +105,6 @@ port map(
     reset => reset,
     address_1 => ip_f(mem_address_bits + word_base - 1 downto word_base),
     address_2 => alu_result_em(mem_address_bits + word_base - 1 downto word_base),
-    address_3 => address_3,
     write_address => alu_result_em(mem_address_bits + word_base - 1 downto word_base),
     read_data_1 => instruction_f,
     read_data_2 => mem_read_data_m,
@@ -235,14 +232,11 @@ port map(
 );
 
 
-ERROR_WTF <= write_mem_to_reg_em and (jump_d or branch_eq_d or branch_ne_d);
-
 -- writeback stage
--- FIX: calc jal case as alu_result, (breaks 31 reg)
 reg_write_data <= mem_read_data_m when write_mem_to_reg_em = '1' -- lw
                else alu_result_em;
 
--- conflict solving
+-- conflict resolving
 reg_data_1_bypassed <= alu_result_em  when reg_write_enable_em = '1' and reg_write_address_em = reg_address_1 else
                        reg_data_1;
                        
@@ -251,7 +245,7 @@ reg_data_2_bypassed <= alu_result_em  when reg_write_enable_em = '1' and reg_wri
 
 early_opcode <= instruction_f(data_bits - 1 downto data_bits - operation_bits);
 early_funct <= instruction_f(operation_bits-1 downto 0);
-early_detected_jump <=  '1' when early_opcode = 4 or early_opcode = 5 or (early_opcode = 0 and early_funct = 8) -- branch_eq or branch_ne
+early_detected_jump <=  '1' when early_opcode = 4 or early_opcode = 5 or (early_opcode = 0 and early_funct = 8) -- branch_eq or branch_ne or jar
                    else '0';
 
 suspend_pipeline <= write_mem_to_reg_d & early_detected_jump;

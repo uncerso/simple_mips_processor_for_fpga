@@ -10,7 +10,6 @@ generic(address_bits : Natural;
 port(
     address_1     : in  unsigned(address_bits-1 downto 0);
     address_2     : in  unsigned(address_bits-1 downto 0);
-    address_3     : in  unsigned(address_bits-1 downto 0);
     write_address : in  unsigned(address_bits-1 downto 0);
     read_data_1   : out unsigned(data_bits-1    downto 0);
     read_data_2   : out unsigned(data_bits-1    downto 0);
@@ -59,5 +58,5 @@ begin
 
     read_data_1 <= RAM(to_integer(address_1));
     read_data_2 <= RAM(to_integer(address_2));
-    read_data_3 <= RAM(to_integer(address_3));
+    read_data_3 <= RAM(to_integer(address_1));
 end data_memory_arch;
