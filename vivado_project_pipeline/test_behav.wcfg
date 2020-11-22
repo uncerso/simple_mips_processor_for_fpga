@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="932000fs"></ZoomStartTime>
-      <ZoomEndTime time="1013601fs"></ZoomEndTime>
-      <Cursor1Time time="1000000fs"></Cursor1Time>
+      <ZoomStartTime time="720690fs"></ZoomStartTime>
+      <ZoomEndTime time="802291fs"></ZoomEndTime>
+      <Cursor1Time time="762890fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="165"></NameColumnWidth>
       <ValueColumnWidth column_width="182"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="14" />
+   <WVObjectSize size="26" />
    <wvobject type="logic" fp_name="/test/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -27,6 +27,54 @@
    <wvobject type="logic" fp_name="/test/reset">
       <obj_property name="ElementShortName">reset</obj_property>
       <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/FetchStage/jump">
+      <obj_property name="ElementShortName">jump</obj_property>
+      <obj_property name="ObjectShortName">jump</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/FetchStage/branch_eq">
+      <obj_property name="ElementShortName">branch_eq</obj_property>
+      <obj_property name="ObjectShortName">branch_eq</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/FetchStage/branch_ne">
+      <obj_property name="ElementShortName">branch_ne</obj_property>
+      <obj_property name="ObjectShortName">branch_ne</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/FetchStage/regs_are_equal">
+      <obj_property name="ElementShortName">regs_are_equal</obj_property>
+      <obj_property name="ObjectShortName">regs_are_equal</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/FetchStage/reg_jump_target">
+      <obj_property name="ElementShortName">reg_jump_target</obj_property>
+      <obj_property name="ObjectShortName">reg_jump_target</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test/DUT/FetchStage/target_ip">
+      <obj_property name="ElementShortName">target_ip[31:0]</obj_property>
+      <obj_property name="ObjectShortName">target_ip[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test/DUT/FetchStage/branch_target">
+      <obj_property name="ElementShortName">branch_target[31:0]</obj_property>
+      <obj_property name="ObjectShortName">branch_target[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/FetchStage/use_target">
+      <obj_property name="ElementShortName">use_target</obj_property>
+      <obj_property name="ObjectShortName">use_target</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/FetchStage/branch">
+      <obj_property name="ElementShortName">branch</obj_property>
+      <obj_property name="ObjectShortName">branch</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test/DUT/DecodeStage/CUNIT/opcode">
+      <obj_property name="ElementShortName">opcode[5:0]</obj_property>
+      <obj_property name="ObjectShortName">opcode[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/test/DUT/DecodeStage/CUNIT/funct">
+      <obj_property name="ElementShortName">funct[5:0]</obj_property>
+      <obj_property name="ObjectShortName">funct[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/DecodeStage/CUNIT/jump">
+      <obj_property name="ElementShortName">jump</obj_property>
+      <obj_property name="ObjectShortName">jump</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test/DUT/FetchStage/IPMANAGER/suspend">
       <obj_property name="ElementShortName">suspend[1:0]</obj_property>

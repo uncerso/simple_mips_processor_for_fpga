@@ -42,6 +42,7 @@ begin
     end process;
     
     imm_ip <= to_unsigned(0, data_bits) when reset = '1' else
+              instruction_pointer     when suspended = "11" else
               instruction_pointer_buf when suspended(1) = '1' or suspended(0) = '1' else
               target                  when suspend = "00" else
               instruction_pointer;
