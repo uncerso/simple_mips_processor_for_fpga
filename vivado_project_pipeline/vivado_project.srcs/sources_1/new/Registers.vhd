@@ -33,10 +33,10 @@ begin
             if write_enable = '1' then
                 REGS(to_integer(write_address)) <= write_data;
             end if;
---            register_data_1 <= REGS(to_integer(register_address_1));
---            register_data_2 <= REGS(to_integer(register_address_2));
+            register_data_1 <= REGS(to_integer(register_address_1)); -- reg bram
+            register_data_2 <= REGS(to_integer(register_address_2)); -- reg bram
         end if;
     end process;
-            register_data_1 <= REGS(to_integer(register_address_1));
-            register_data_2 <= REGS(to_integer(register_address_2));
+--            register_data_1 <= REGS(to_integer(register_address_1));  -- reg normal
+--            register_data_2 <= REGS(to_integer(register_address_2));  -- reg normal
 end registers_arch;

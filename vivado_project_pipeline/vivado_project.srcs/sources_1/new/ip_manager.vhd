@@ -10,6 +10,7 @@ port(
     reset      : in  std_logic;
     target     : in  unsigned(data_bits-1 downto 0);
     ip         : out unsigned(data_bits-1 downto 0);
+    imm_ip     : out unsigned(data_bits-1 downto 0);
     ignore_suspend : out std_logic
 );
 end entity;
@@ -40,6 +41,11 @@ begin
         end if;
     end process;
     
+    imm_ip <= to_unsigned(0, data_bits) when reset = '1' else
+              instruction_pointer_buf when suspended(1) = '1' or suspended(0) = '1' else
+              target                  when suspend = "00" else
+              instruction_pointer;
+
     ignore_suspend <= '1' when suspended = "10" or suspended = "01" else '0';
     ip <= instruction_pointer;
 end ip_manager_arch;

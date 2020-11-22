@@ -50,10 +50,11 @@ begin
             if write_enable = '1' then
                 RAM(to_integer(write_address)) <= write_data;
             end if;
---            read_data_2 <= RAM(to_integer(address_2));
+            read_data_1 <= RAM(to_integer(address_1)); -- mem bram
+            read_data_2 <= RAM(to_integer(address_2)); -- mem bram
         end if;
     end process;
-    read_data_1 <= RAM(to_integer(address_1));
-    read_data_2 <= RAM(to_integer(address_2));
+--    read_data_1 <= RAM(to_integer(address_1)); -- mem normal
+--    read_data_2 <= RAM(to_integer(address_2)); -- mem normal
 
 end data_memory_arch;

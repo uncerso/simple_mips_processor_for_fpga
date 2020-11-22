@@ -9,6 +9,7 @@ generic(data_bits        : Natural;
 );
 port(
     ip : out  unsigned(data_bits-1 downto 0);
+    imm_ip : out  unsigned(data_bits-1 downto 0);
     suspend : in std_logic_vector(1 downto 0);
     jump : in std_logic;
     branch_eq : in std_logic;
@@ -45,6 +46,7 @@ port map (
     reset => reset,
     target => target_ip,
     ip => current_ip,
+    imm_ip => imm_ip,
     ignore_suspend => ignore_suspend
 );
 

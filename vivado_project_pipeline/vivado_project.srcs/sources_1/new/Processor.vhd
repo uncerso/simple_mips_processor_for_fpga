@@ -32,6 +32,9 @@ signal early_detected_jump : std_logic;
 signal early_opcode        : unsigned(operation_bits-1 downto 0);
 signal early_funct         : unsigned(operation_bits-1 downto 0);
 
+signal early_reg_address_1 : unsigned(reg_address_bits-1 downto 0);
+signal early_reg_address_2 : unsigned(reg_address_bits-1 downto 0);
+
 signal reg_address_1    : unsigned(reg_address_bits-1 downto 0);
 signal reg_address_2    : unsigned(reg_address_bits-1 downto 0);
 signal reg_data_1       : unsigned(data_bits-1 downto 0);
@@ -41,17 +44,20 @@ signal reg_write_data   : unsigned(data_bits-1 downto 0);
 signal reg_data_1_bypassed : unsigned(data_bits-1 downto 0);
 signal reg_data_2_bypassed : unsigned(data_bits-1 downto 0);
 
+signal imm_ip : unsigned(data_bits-1 downto 0);
 signal ip_f : unsigned(data_bits-1 downto 0);
 signal instruction_f : unsigned(data_bits-1 downto 0);
 signal use_reg1_em_f  : std_logic;
 signal use_reg2_em_f  : std_logic;
+signal use_reg1_mw_f  : std_logic;
+signal use_reg2_mw_f  : std_logic;
 
 signal ip_fd : unsigned(data_bits-1 downto 0);
 signal instruction_fd : unsigned(data_bits-1 downto 0);
 signal use_reg1_em_fd  : std_logic;
 signal use_reg2_em_fd  : std_logic;
---signal reg_address_1_fd    : unsigned(reg_address_bits-1 downto 0);
---signal reg_address_2_fd    : unsigned(reg_address_bits-1 downto 0);
+signal use_reg1_mw_fd  : std_logic;
+signal use_reg2_mw_fd  : std_logic;
 
 signal write_mem_to_reg_d : std_logic;
 signal jump_d : std_logic;
@@ -120,8 +126,12 @@ use_reg1_mw_d <= '1' when reg_address_1 = reg_write_address_em else '0';
 use_reg2_em_d <= '1' when reg_address_2 = reg_write_address_de else '0';
 use_reg2_mw_d <= '1' when reg_address_2 = reg_write_address_em else '0';
 
-use_reg1_em_f <= '1' when instruction_f(r1_pos-1 downto r1_pos-reg_address_bits) = reg_write_address_de else '0';
-use_reg2_em_f <= '1' when instruction_f(r2_pos-1 downto r2_pos-reg_address_bits) = reg_write_address_de else '0';
+early_reg_address_1 <= instruction_f(r1_pos-1 downto r1_pos-reg_address_bits);
+early_reg_address_2 <= instruction_f(r2_pos-1 downto r2_pos-reg_address_bits);
+use_reg1_em_f <= '1' when early_reg_address_1 = reg_write_address_de else '0';
+use_reg2_em_f <= '1' when early_reg_address_2 = reg_write_address_de else '0';
+use_reg1_mw_f <= '1' when early_reg_address_1 = reg_write_address_em else '0';
+use_reg2_mw_f <= '1' when early_reg_address_2 = reg_write_address_em else '0';
 
 MEM : entity work.data_memory 
 generic map(
@@ -131,8 +141,12 @@ generic map(
 port map(
     clk => clk,
     reset => reset,
-    address_1 => ip_f(mem_address_bits + word_base - 1 downto word_base),
-    address_2 => alu_result_em(mem_address_bits + word_base - 1 downto word_base),
+
+--    address_1 => ip_f(mem_address_bits + word_base - 1 downto word_base),              -- mem normal
+--    address_2 => alu_result_em(mem_address_bits + word_base - 1 downto word_base),     -- mem normal
+    address_1 => imm_ip(mem_address_bits + word_base - 1 downto word_base),              -- mem bram
+    address_2 => alu_result_fixed_e(mem_address_bits + word_base - 1 downto word_base),  -- mem bram
+
     write_address => alu_result_em(mem_address_bits + word_base - 1 downto word_base),
     read_data_1 => instruction_f,
     read_data_2 => mem_read_data_m,
@@ -147,6 +161,7 @@ generic map(
     word_base => word_base
 )
 port map(
+    imm_ip => imm_ip,
     ip => ip_f,
     suspend => suspend_pipeline,
     jump => jump_d,
@@ -251,10 +266,12 @@ generic map(
 port map(
     clk  => clk,
     reset => reset,
---    register_address_1 => reg_address_1_fd,
---    register_address_2 => reg_address_2_fd,
-    register_address_1 => reg_address_1,
-    register_address_2 => reg_address_2,
+
+    register_address_1 => early_reg_address_1, -- reg bram
+    register_address_2 => early_reg_address_2, -- reg bram
+--    register_address_1 => reg_address_1,     -- reg normal
+--    register_address_2 => reg_address_2,     -- reg normal
+
     register_data_1 => reg_data_1,
     register_data_2 => reg_data_2,
     write_data  => reg_write_data,
@@ -271,13 +288,11 @@ reg_write_data <= mem_read_data_m when write_mem_to_reg_em = '1' -- lw
 
 -- conflict resolving
 reg_data_1_bypassed <= alu_result_em     when reg_write_enable_em = '1' and use_reg1_em_fd = '1' else
---reg_data_1_bypassed <= alu_result_em     when reg_write_enable_em = '1' and reg_write_address_em = reg_address_1_fd else
---                       reg_write_data_mw when reg_write_enable_mw = '1' and reg_write_address_mw = reg_address_1_fd else
+                       reg_write_data_mw when reg_write_enable_mw = '1' and use_reg1_mw_fd = '1' else -- reg bram
                        reg_data_1;
                        
 reg_data_2_bypassed <= alu_result_em     when reg_write_enable_em = '1' and use_reg2_em_fd = '1' else
---reg_data_2_bypassed <= alu_result_em     when reg_write_enable_em = '1' and reg_write_address_em = reg_address_2_fd else
---                       reg_write_data_mw when reg_write_enable_mw = '1' and reg_write_address_mw = reg_address_2_fd else
+                       reg_write_data_mw when reg_write_enable_mw = '1' and use_reg2_mw_fd = '1' else -- reg bram
                        reg_data_2;
 
 early_opcode <= instruction_f(data_bits - 1 downto data_bits - operation_bits);
@@ -295,8 +310,8 @@ process (clk, reset) is begin
             instruction_fd       <= to_unsigned(0, data_bits);
             use_reg1_em_fd       <= '0';
             use_reg2_em_fd       <= '0';
---            reg_address_1_fd     <= to_unsigned(0, reg_address_bits);
---            reg_address_2_fd     <= to_unsigned(0, reg_address_bits);
+            use_reg1_mw_fd       <= '0';
+            use_reg2_mw_fd       <= '0';
 
             ip_de                <= to_unsigned(0, data_bits);
             instruction_de       <= to_unsigned(0, data_bits);
@@ -337,8 +352,8 @@ process (clk, reset) is begin
             end if;
             use_reg1_em_fd       <= use_reg1_em_f;
             use_reg2_em_fd       <= use_reg2_em_f;
---            reg_address_1_fd     <= reg_address_1       ;
---            reg_address_2_fd     <= reg_address_2       ;
+            use_reg1_mw_fd       <= use_reg1_mw_f;
+            use_reg2_mw_fd       <= use_reg2_mw_f;
 
             ip_de                <= ip_fd               ;
             instruction_de       <= instruction_fd      ;
@@ -346,8 +361,6 @@ process (clk, reset) is begin
             jump_de              <= jump_d              ;
             ext_imm_de           <= ext_imm_d           ;
             mem_write_enable_de  <= mem_write_enable_d  ;
---            reg_address_1_de     <= reg_address_1_fd    ;
---            reg_address_2_de     <= reg_address_2_fd    ;
             reg_address_1_de     <= reg_address_1    ;
             reg_address_2_de     <= reg_address_2    ;
             use_reg1_em_de       <= use_reg1_em_d;
@@ -356,10 +369,11 @@ process (clk, reset) is begin
             use_reg2_mw_de       <= use_reg2_mw_d;
 
 
---            register_data_1_de   <= reg_data_1_bypassed ;
---            register_data_2_de   <= reg_data_2_bypassed ;
-            register_data_1_de   <= reg_data_1 ;
-            register_data_2_de   <= reg_data_2 ;
+            register_data_1_de   <= reg_data_1_bypassed ; -- reg bram
+            register_data_2_de   <= reg_data_2_bypassed ; -- reg bram
+--            register_data_1_de   <= reg_data_1      ; -- reg normal
+--            register_data_2_de   <= reg_data_2      ; -- reg normal
+
             alu_mode_de          <= alu_mode_d          ;
             shift_de             <= shift_d             ;
             alu_src_is_reg_de    <= alu_src_is_reg_d    ;
