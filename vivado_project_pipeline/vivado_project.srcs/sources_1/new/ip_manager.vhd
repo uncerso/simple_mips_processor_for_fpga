@@ -8,9 +8,7 @@ port(
     suspend    : in  std_logic_vector(1 downto 0);
     clk        : in  std_logic;
     reset      : in  std_logic;
-    offset     : in  unsigned(data_bits-1 downto 0);
     target     : in  unsigned(data_bits-1 downto 0);
-    use_target : in  std_logic;
     ip         : out unsigned(data_bits-1 downto 0);
     ignore_suspend : out std_logic
 );
@@ -35,17 +33,9 @@ begin
                 instruction_pointer <= instruction_pointer_buf;
             elsif suspend(1) = '1' or suspend(0) = '1' then
                 suspended <= suspend;
-                if use_target = '1' then
-                    instruction_pointer_buf <= target;
-                else
-                    instruction_pointer_buf <= instruction_pointer + offset;
-                end if;
+                instruction_pointer_buf <= target;
             else
-                if use_target = '1' then
-                    instruction_pointer <= target;
-                else
-                    instruction_pointer <= instruction_pointer + offset;
-                end if;
+                instruction_pointer <= target;
             end if;
         end if;
     end process;

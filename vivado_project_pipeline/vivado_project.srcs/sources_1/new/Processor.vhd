@@ -8,6 +8,7 @@ entity mips_processor is
 generic(constant data_bits        : Natural := 32;
         constant mem_address_bits : Natural := 8;
         constant reg_address_bits : Natural := 5;
+        constant imm_bits         : Natural := 16;
         constant word_base        : Natural := 2;
         constant shift_bits       : Natural := 5
 );
@@ -42,9 +43,15 @@ signal reg_data_2_bypassed : unsigned(data_bits-1 downto 0);
 
 signal ip_f : unsigned(data_bits-1 downto 0);
 signal instruction_f : unsigned(data_bits-1 downto 0);
+signal use_reg1_em_f  : std_logic;
+signal use_reg2_em_f  : std_logic;
 
 signal ip_fd : unsigned(data_bits-1 downto 0);
 signal instruction_fd : unsigned(data_bits-1 downto 0);
+signal use_reg1_em_fd  : std_logic;
+signal use_reg2_em_fd  : std_logic;
+--signal reg_address_1_fd    : unsigned(reg_address_bits-1 downto 0);
+--signal reg_address_2_fd    : unsigned(reg_address_bits-1 downto 0);
 
 signal write_mem_to_reg_d : std_logic;
 signal jump_d : std_logic;
@@ -57,6 +64,11 @@ signal mem_write_enable_d: std_logic;
 signal alu_mode_d : modes;
 signal shift_d : unsigned(shift_bits - 1 downto 0);
 signal alu_src_is_reg_d : std_logic;
+signal reg_write_address_d : unsigned(reg_address_bits-1 downto 0);
+signal use_reg1_em_d  : std_logic;
+signal use_reg1_mw_d  : std_logic;
+signal use_reg2_em_d  : std_logic;
+signal use_reg2_mw_d  : std_logic;
 
 signal ip_de : unsigned(data_bits-1 downto 0);
 signal instruction_de : unsigned(data_bits-1 downto 0);
@@ -71,10 +83,16 @@ signal register_data_2_de : unsigned(data_bits-1 downto 0);
 signal alu_mode_de : modes;
 signal shift_de : unsigned(shift_bits-1 downto 0);
 signal alu_src_is_reg_de : std_logic;
+signal reg_write_address_de : unsigned(reg_address_bits-1 downto 0);
+signal use_reg1_em_de  : std_logic;
+signal use_reg1_mw_de  : std_logic;
+signal use_reg2_em_de  : std_logic;
+signal use_reg2_mw_de  : std_logic;
 
-signal reg_write_address_dd : unsigned(reg_address_bits-1 downto 0);
+
 signal reg_write_enable_dd: std_logic;
 signal alu_result_e : unsigned(data_bits-1 downto 0);
+signal alu_result_fixed_e : unsigned(data_bits-1 downto 0);
 signal mem_write_data_e : unsigned(data_bits-1 downto 0);
 signal real_reg2_data_e : unsigned(data_bits-1 downto 0);
 
@@ -89,11 +107,21 @@ signal mem_write_data_em : unsigned(data_bits-1 downto 0);
 
 signal mem_read_data_m : unsigned(data_bits-1 downto 0);
 
-signal reg_write_address_mw : unsigned(reg_address_bits-1 downto 0);
 signal reg_write_enable_mw  : std_logic;
 signal reg_write_data_mw    : unsigned(data_bits-1 downto 0);
 
 begin
+
+read_data_3 <= instruction_f;
+reg_address_1 <= instruction_fd(r1_pos-1 downto r1_pos-reg_address_bits);
+reg_address_2 <= instruction_fd(r2_pos-1 downto r2_pos-reg_address_bits);
+use_reg1_em_d <= '1' when reg_address_1 = reg_write_address_de else '0';
+use_reg1_mw_d <= '1' when reg_address_1 = reg_write_address_em else '0';
+use_reg2_em_d <= '1' when reg_address_2 = reg_write_address_de else '0';
+use_reg2_mw_d <= '1' when reg_address_2 = reg_write_address_em else '0';
+
+use_reg1_em_f <= '1' when instruction_f(r1_pos-1 downto r1_pos-reg_address_bits) = reg_write_address_de else '0';
+use_reg2_em_f <= '1' when instruction_f(r2_pos-1 downto r2_pos-reg_address_bits) = reg_write_address_de else '0';
 
 MEM : entity work.data_memory 
 generic map(
@@ -108,7 +136,6 @@ port map(
     write_address => alu_result_em(mem_address_bits + word_base - 1 downto word_base),
     read_data_1 => instruction_f,
     read_data_2 => mem_read_data_m,
-    read_data_3 => read_data_3,
     write_data => mem_write_data_em,
     write_enable => mem_write_enable_em
 );
@@ -116,6 +143,7 @@ port map(
 FetchStage : entity work.fetch_stage
 generic map(
     data_bits => data_bits,
+    imm_bits => imm_bits,
     word_base => word_base
 )
 port map(
@@ -126,7 +154,7 @@ port map(
     branch_ne => branch_ne_d,
     regs_are_equal => regs_are_equal_d,
     reg_jump_target => reg_jump_target_d,
-    ext_imm => ext_imm_d,
+    raw_imm => instruction_fd(imm_bits-1 downto 0),
     register_data_1 => reg_data_1_bypassed,
     ignore_suspend => ignore_suspend,
     clk => clk,
@@ -156,8 +184,8 @@ port map(
     reg_jump_target => reg_jump_target_d,
     ext_imm => ext_imm_d,
     
-    register_address_1 => reg_address_1,
-    register_address_2 => reg_address_2,
+    reg_write_address => reg_write_address_d,
+
     register_data_1 => reg_data_1_bypassed,
     register_data_2 => reg_data_2_bypassed,
     clk => clk,
@@ -186,12 +214,15 @@ port map (
     register_data_2      => register_data_2_de,
 
     reg_write_enable_em  => reg_write_enable_em,
-    reg_write_address_em => reg_write_address_em,
     register_data_em     => alu_result_em,
     
-    reg_write_address_mw => reg_write_address_mw,
     reg_write_enable_mw  => reg_write_enable_mw,
     register_data_mw     => reg_write_data_mw,
+
+    use_reg1_em  => use_reg1_em_de,
+    use_reg1_mw  => use_reg1_mw_de,
+    use_reg2_em  => use_reg2_em_de,
+    use_reg2_mw  => use_reg2_mw_de,
 
 
     clk => clk,
@@ -209,8 +240,6 @@ generic map(
 port map(
     second_reg => real_reg2_data_e,
     instruction => instruction_de,
-    jump => jump_de,
-    reg_write_address => reg_write_address_dd,
     reg_write_enable => reg_write_enable_dd
 );
 
@@ -222,6 +251,8 @@ generic map(
 port map(
     clk  => clk,
     reset => reset,
+--    register_address_1 => reg_address_1_fd,
+--    register_address_2 => reg_address_2_fd,
     register_address_1 => reg_address_1,
     register_address_2 => reg_address_2,
     register_data_1 => reg_data_1,
@@ -231,16 +262,22 @@ port map(
     write_enable  => reg_write_enable_em
 );
 
+alu_result_fixed_e <= ip_em + two_steps when jump_de = '1' and reg_write_enable_dd = '1' else -- jal
+                      alu_result_e;
 
 -- writeback stage
 reg_write_data <= mem_read_data_m when write_mem_to_reg_em = '1' -- lw
                else alu_result_em;
 
 -- conflict resolving
-reg_data_1_bypassed <= alu_result_em  when reg_write_enable_em = '1' and reg_write_address_em = reg_address_1 else
+reg_data_1_bypassed <= alu_result_em     when reg_write_enable_em = '1' and use_reg1_em_fd = '1' else
+--reg_data_1_bypassed <= alu_result_em     when reg_write_enable_em = '1' and reg_write_address_em = reg_address_1_fd else
+--                       reg_write_data_mw when reg_write_enable_mw = '1' and reg_write_address_mw = reg_address_1_fd else
                        reg_data_1;
                        
-reg_data_2_bypassed <= alu_result_em  when reg_write_enable_em = '1' and reg_write_address_em = reg_address_2 else
+reg_data_2_bypassed <= alu_result_em     when reg_write_enable_em = '1' and use_reg2_em_fd = '1' else
+--reg_data_2_bypassed <= alu_result_em     when reg_write_enable_em = '1' and reg_write_address_em = reg_address_2_fd else
+--                       reg_write_data_mw when reg_write_enable_mw = '1' and reg_write_address_mw = reg_address_2_fd else
                        reg_data_2;
 
 early_opcode <= instruction_f(data_bits - 1 downto data_bits - operation_bits);
@@ -256,6 +293,10 @@ process (clk, reset) is begin
         if reset = '1' then
             ip_fd                <= to_unsigned(0, data_bits);
             instruction_fd       <= to_unsigned(0, data_bits);
+            use_reg1_em_fd       <= '0';
+            use_reg2_em_fd       <= '0';
+--            reg_address_1_fd     <= to_unsigned(0, reg_address_bits);
+--            reg_address_2_fd     <= to_unsigned(0, reg_address_bits);
 
             ip_de                <= to_unsigned(0, data_bits);
             instruction_de       <= to_unsigned(0, data_bits);
@@ -270,17 +311,20 @@ process (clk, reset) is begin
             alu_mode_de          <= m_xor;
             shift_de             <= to_unsigned(0, shift_bits);
             alu_src_is_reg_de    <= '0';
+            reg_write_address_de <= to_unsigned(0, reg_address_bits);
+            use_reg1_em_de       <= '0';
+            use_reg1_mw_de       <= '0';
+            use_reg2_em_de       <= '0';
+            use_reg2_mw_de       <= '0';
 
             ip_em                <= to_unsigned(0, data_bits);
             write_mem_to_reg_em  <= '0';
-            jump_em              <= '0';
             reg_write_address_em <= to_unsigned(0, reg_address_bits);
             reg_write_enable_em  <= '0';
             mem_write_enable_em  <= '0';
             alu_result_em        <= to_unsigned(0, data_bits);
             mem_write_data_em    <= to_unsigned(0, data_bits);
             
-            reg_write_address_mw <= to_unsigned(0, reg_address_bits);
             reg_write_enable_mw  <= '0';
             reg_write_data_mw    <= to_unsigned(0, data_bits);
 
@@ -291,6 +335,10 @@ process (clk, reset) is begin
             else
                 instruction_fd   <= instruction_f;
             end if;
+            use_reg1_em_fd       <= use_reg1_em_f;
+            use_reg2_em_fd       <= use_reg2_em_f;
+--            reg_address_1_fd     <= reg_address_1       ;
+--            reg_address_2_fd     <= reg_address_2       ;
 
             ip_de                <= ip_fd               ;
             instruction_de       <= instruction_fd      ;
@@ -298,29 +346,33 @@ process (clk, reset) is begin
             jump_de              <= jump_d              ;
             ext_imm_de           <= ext_imm_d           ;
             mem_write_enable_de  <= mem_write_enable_d  ;
-            reg_address_1_de     <= reg_address_1       ;
-            reg_address_2_de     <= reg_address_2       ;
+--            reg_address_1_de     <= reg_address_1_fd    ;
+--            reg_address_2_de     <= reg_address_2_fd    ;
+            reg_address_1_de     <= reg_address_1    ;
+            reg_address_2_de     <= reg_address_2    ;
+            use_reg1_em_de       <= use_reg1_em_d;
+            use_reg1_mw_de       <= use_reg1_mw_d;
+            use_reg2_em_de       <= use_reg2_em_d;
+            use_reg2_mw_de       <= use_reg2_mw_d;
+
+
+--            register_data_1_de   <= reg_data_1_bypassed ;
+--            register_data_2_de   <= reg_data_2_bypassed ;
             register_data_1_de   <= reg_data_1 ;
             register_data_2_de   <= reg_data_2 ;
             alu_mode_de          <= alu_mode_d          ;
             shift_de             <= shift_d             ;
             alu_src_is_reg_de    <= alu_src_is_reg_d    ;
+            reg_write_address_de <= reg_write_address_d ;
 
             ip_em                <= ip_de               ;
             write_mem_to_reg_em  <= write_mem_to_reg_de ;
-            jump_em              <= jump_de             ;
-            reg_write_address_em <= reg_write_address_dd;
+            reg_write_address_em <= reg_write_address_de;
             reg_write_enable_em  <= reg_write_enable_dd ;
             mem_write_enable_em  <= mem_write_enable_de ;
             mem_write_data_em    <= mem_write_data_e    ;
-
-            if jump_de = '1' and reg_write_enable_dd = '1' then -- jal
-                alu_result_em    <= (ip_em + two_steps) ;
-            else
-                alu_result_em    <= alu_result_e        ;
-            end if;            
+            alu_result_em    <= alu_result_fixed_e      ;
             
-            reg_write_address_mw <= reg_write_address_em;
             reg_write_enable_mw  <= reg_write_enable_em;
             reg_write_data_mw    <= reg_write_data;
         end if;

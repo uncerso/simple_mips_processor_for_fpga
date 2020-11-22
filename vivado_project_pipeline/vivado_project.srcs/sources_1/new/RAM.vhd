@@ -13,7 +13,6 @@ port(
     write_address : in  unsigned(address_bits-1 downto 0);
     read_data_1   : out unsigned(data_bits-1    downto 0);
     read_data_2   : out unsigned(data_bits-1    downto 0);
-    read_data_3   : out unsigned(data_bits-1    downto 0);
     write_data    : in  unsigned(data_bits-1    downto 0);
     write_enable  : in  std_logic;
     clk           : in  std_logic;
@@ -47,16 +46,14 @@ attribute ram_type of RAM : signal is "block";
 begin
 
     process (clk) is begin
-        if (clk'event and clk = '1' and write_enable = '1') then
-            if reset = '1' then
-                RAM(to_integer(write_address)) <= to_unsigned(0, data_bits);
-            else
+        if (clk'event and clk = '1') then
+            if write_enable = '1' then
                 RAM(to_integer(write_address)) <= write_data;
             end if;
+--            read_data_2 <= RAM(to_integer(address_2));
         end if;
     end process;
-
     read_data_1 <= RAM(to_integer(address_1));
     read_data_2 <= RAM(to_integer(address_2));
-    read_data_3 <= RAM(to_integer(address_1));
+
 end data_memory_arch;

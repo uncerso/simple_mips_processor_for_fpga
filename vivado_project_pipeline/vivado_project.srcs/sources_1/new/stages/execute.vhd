@@ -24,12 +24,16 @@ port(
     register_data_2  : in unsigned(data_bits-1 downto 0);
 
     reg_write_enable_em  : in std_logic;
-    reg_write_address_em : in unsigned(reg_address_bits-1 downto 0);
     register_data_em     : in unsigned(data_bits-1 downto 0);
 
     reg_write_enable_mw  : in std_logic;
-    reg_write_address_mw : in unsigned(reg_address_bits-1 downto 0);
     register_data_mw     : in unsigned(data_bits-1 downto 0);
+    
+    use_reg1_em  : in std_logic;
+    use_reg1_mw  : in std_logic;
+    use_reg2_em  : in std_logic;
+    use_reg2_mw  : in std_logic;
+    
 
     clk: in std_logic;
     reset: in std_logic
@@ -55,12 +59,12 @@ port map(
     shift => shift
 );
 
-lhs <= register_data_em when reg_write_enable_em = '1' and reg_write_address_em = reg_address_1 else
-       register_data_mw when reg_write_enable_mw = '1' and reg_write_address_mw = reg_address_1 else
+lhs <= register_data_em when reg_write_enable_em = '1' and use_reg1_em = '1' else
+       register_data_mw when reg_write_enable_mw = '1' and use_reg1_mw = '1' else
        register_data_1;
 
-reg <= register_data_em when reg_write_enable_em = '1' and reg_write_address_em = reg_address_2 else
-       register_data_mw when reg_write_enable_mw = '1' and reg_write_address_mw = reg_address_2 else
+reg <= register_data_em when reg_write_enable_em = '1' and use_reg2_em = '1' else
+       register_data_mw when reg_write_enable_mw = '1' and use_reg2_mw = '1' else
        register_data_2;
 
 rhs <= ext_imm when alu_src_is_reg = '0' else reg;

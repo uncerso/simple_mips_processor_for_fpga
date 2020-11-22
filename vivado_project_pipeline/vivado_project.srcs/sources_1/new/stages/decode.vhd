@@ -23,10 +23,9 @@ port(
     branch_ne : out std_logic;
     reg_jump_target : out std_logic;
     ext_imm         : out unsigned(data_bits-1 downto 0);
+    reg_write_address : out unsigned(reg_address_bits-1 downto 0);
     
     regs_are_equal   : out std_logic;
-    register_address_1 : out unsigned(reg_address_bits-1 downto 0);
-    register_address_2 : out unsigned(reg_address_bits-1 downto 0);
     register_data_1 : in unsigned(data_bits-1 downto 0);
     register_data_2 : in unsigned(data_bits-1 downto 0);
     clk: in std_logic;
@@ -45,7 +44,7 @@ constant shift_pos : Natural := r3_pos - reg_address_bits;
 signal use_zero_ext       : std_logic;
 signal jump_internal : std_logic;
 
-
+signal opcode : unsigned(operation_bits-1 downto 0);
 begin
 
 CUNIT : entity work.control_unit
@@ -54,7 +53,7 @@ generic map(
     operation_bits => operation_bits
 )
 port map(
-    opcode => instruction(data_bits-1 downto data_bits-operation_bits),
+    opcode => opcode,
     funct => instruction(operation_bits-1 downto 0),
     mem_write_enable => mem_write_enable,
     alu_mode => alu_mode,
@@ -78,12 +77,16 @@ port map(
     use_zero_ext => use_zero_ext
 );
 
+    opcode <= instruction(data_bits-1 downto data_bits-operation_bits);
+
     jump <= jump_internal;
 
     regs_are_equal <= '1' when register_data_1 = register_data_2 else '0';
-    register_address_1 <= instruction(r1_pos-1 downto r1_pos-reg_address_bits);
-    register_address_2 <= instruction(r2_pos-1 downto r2_pos-reg_address_bits);
 
     shift <= instruction(shift_pos-1 downto shift_pos-shift_bits);
+
+    reg_write_address <= to_unsigned((2 ** reg_address_bits) - 1, reg_address_bits) when opcode = 3 -- jal
+                else instruction(r3_pos-1 downto r3_pos-reg_address_bits) when opcode = 0 -- R-type
+                else instruction(r2_pos-1 downto r2_pos-reg_address_bits);
 
 end decode_stage_arch;
