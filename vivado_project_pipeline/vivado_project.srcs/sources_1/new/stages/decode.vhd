@@ -27,9 +27,7 @@ port(
     
     regs_are_equal   : out std_logic;
     register_data_1 : in unsigned(data_bits-1 downto 0);
-    register_data_2 : in unsigned(data_bits-1 downto 0);
-    clk: in std_logic;
-    reset: in std_logic
+    register_data_2 : in unsigned(data_bits-1 downto 0)
 );
 end entity;
 

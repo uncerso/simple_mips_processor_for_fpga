@@ -32,11 +32,7 @@ port(
     use_reg1_em  : in std_logic;
     use_reg1_mw  : in std_logic;
     use_reg2_em  : in std_logic;
-    use_reg2_mw  : in std_logic;
-    
-
-    clk: in std_logic;
-    reset: in std_logic
+    use_reg2_mw  : in std_logic
 );
 end entity;
 

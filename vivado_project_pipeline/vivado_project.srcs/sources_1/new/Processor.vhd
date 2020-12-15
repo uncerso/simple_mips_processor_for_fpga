@@ -142,10 +142,10 @@ port map(
     clk => clk,
     reset => reset,
 
---    address_1 => ip_f(mem_address_bits + word_base - 1 downto word_base),              -- mem normal
---    address_2 => alu_result_em(mem_address_bits + word_base - 1 downto word_base),     -- mem normal
-    address_1 => imm_ip(mem_address_bits + word_base - 1 downto word_base),              -- mem bram
-    address_2 => alu_result_fixed_e(mem_address_bits + word_base - 1 downto word_base),  -- mem bram
+    address_1 => ip_f(mem_address_bits + word_base - 1 downto word_base),              -- mem normal
+    address_2 => alu_result_em(mem_address_bits + word_base - 1 downto word_base),     -- mem normal
+--    address_1 => imm_ip(mem_address_bits + word_base - 1 downto word_base),              -- mem bram
+--    address_2 => alu_result_fixed_e(mem_address_bits + word_base - 1 downto word_base),  -- mem bram
 
     write_address => alu_result_em(mem_address_bits + word_base - 1 downto word_base),
     read_data_1 => instruction_f,
@@ -202,9 +202,7 @@ port map(
     reg_write_address => reg_write_address_d,
 
     register_data_1 => reg_data_1_bypassed,
-    register_data_2 => reg_data_2_bypassed,
-    clk => clk,
-    reset => reset
+    register_data_2 => reg_data_2_bypassed
 );
 
 ExecuteStage : entity work.execute_stage
@@ -237,11 +235,7 @@ port map (
     use_reg1_em  => use_reg1_em_de,
     use_reg1_mw  => use_reg1_mw_de,
     use_reg2_em  => use_reg2_em_de,
-    use_reg2_mw  => use_reg2_mw_de,
-
-
-    clk => clk,
-    reset => reset
+    use_reg2_mw  => use_reg2_mw_de
 );
 
 DelayedDecodeStage : entity work.delayed_decode_stage_function
