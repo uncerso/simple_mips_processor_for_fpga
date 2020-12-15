@@ -16,7 +16,7 @@ port(
     write_data    : in  unsigned(data_bits-1    downto 0);
     write_enable  : in  std_logic;
     clk           : in  std_logic;
-    reset         : in  std_logic
+    resetn         : in  std_logic
 );
 end entity;
 

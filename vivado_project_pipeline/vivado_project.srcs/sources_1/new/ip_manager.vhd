@@ -7,7 +7,7 @@ generic(data_bits : Natural);
 port(
     suspend    : in  std_logic_vector(1 downto 0);
     clk        : in  std_logic;
-    reset      : in  std_logic;
+    resetn      : in  std_logic;
     target     : in  unsigned(data_bits-1 downto 0);
     ip         : out unsigned(data_bits-1 downto 0);
     imm_ip     : out unsigned(data_bits-1 downto 0);
@@ -16,14 +16,14 @@ port(
 end entity;
 
 architecture ip_manager_arch of ip_manager is
-signal suspended : std_logic_vector(1 downto 0);
+signal suspended : std_logic_vector(1 downto 0) := "00";
 signal instruction_pointer_buf : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 signal instruction_pointer : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 begin
 
     process (clk) is begin
         if clk'event and clk = '1' then
-            if reset = '1' then
+            if resetn = '0' then
                 suspended <= "00";
                 instruction_pointer_buf <= to_unsigned(0, data_bits);
                 instruction_pointer <= to_unsigned(0, data_bits);
@@ -41,7 +41,7 @@ begin
         end if;
     end process;
     
-    imm_ip <= to_unsigned(0, data_bits) when reset = '1' else
+    imm_ip <= to_unsigned(0, data_bits) when resetn = '1' else
               instruction_pointer     when suspended = "11" else
               instruction_pointer_buf when suspended(1) = '1' or suspended(0) = '1' else
               target                  when suspend = "00" else

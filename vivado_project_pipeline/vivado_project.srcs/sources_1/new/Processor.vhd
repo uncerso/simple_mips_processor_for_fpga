@@ -15,7 +15,7 @@ generic(constant data_bits        : Natural := 32;
 port(
     read_data_3 : out unsigned(data_bits-1    downto 0);
     clk: in std_logic;
-    reset: in std_logic
+    resetn: in std_logic
 );
 end entity;
 
@@ -52,12 +52,12 @@ signal use_reg2_em_f  : std_logic;
 signal use_reg1_mw_f  : std_logic;
 signal use_reg2_mw_f  : std_logic;
 
-signal ip_fd : unsigned(data_bits-1 downto 0);
-signal instruction_fd : unsigned(data_bits-1 downto 0);
-signal use_reg1_em_fd  : std_logic;
-signal use_reg2_em_fd  : std_logic;
-signal use_reg1_mw_fd  : std_logic;
-signal use_reg2_mw_fd  : std_logic;
+signal ip_fd           : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal instruction_fd  : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal use_reg1_em_fd  : std_logic := '0';
+signal use_reg2_em_fd  : std_logic := '0';
+signal use_reg1_mw_fd  : std_logic := '0';
+signal use_reg2_mw_fd  : std_logic := '0';
 
 signal write_mem_to_reg_d : std_logic;
 signal jump_d : std_logic;
@@ -76,24 +76,24 @@ signal use_reg1_mw_d  : std_logic;
 signal use_reg2_em_d  : std_logic;
 signal use_reg2_mw_d  : std_logic;
 
-signal ip_de : unsigned(data_bits-1 downto 0);
-signal instruction_de : unsigned(data_bits-1 downto 0);
-signal write_mem_to_reg_de : std_logic;
-signal jump_de : std_logic;
-signal ext_imm_de         : unsigned(data_bits-1 downto 0);
-signal mem_write_enable_de: std_logic;
-signal reg_address_1_de    : unsigned(reg_address_bits-1 downto 0);
-signal reg_address_2_de    : unsigned(reg_address_bits-1 downto 0);
-signal register_data_1_de : unsigned(data_bits-1 downto 0);
-signal register_data_2_de : unsigned(data_bits-1 downto 0);
-signal alu_mode_de : modes;
-signal shift_de : unsigned(shift_bits-1 downto 0);
-signal alu_src_is_reg_de : std_logic;
-signal reg_write_address_de : unsigned(reg_address_bits-1 downto 0);
-signal use_reg1_em_de  : std_logic;
-signal use_reg1_mw_de  : std_logic;
-signal use_reg2_em_de  : std_logic;
-signal use_reg2_mw_de  : std_logic;
+signal ip_de                : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal instruction_de       : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal write_mem_to_reg_de  : std_logic := '0';
+signal jump_de              : std_logic := '0';
+signal ext_imm_de           : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal mem_write_enable_de  : std_logic := '0';
+signal reg_address_1_de     : unsigned(reg_address_bits-1 downto 0) := to_unsigned(0, reg_address_bits);
+signal reg_address_2_de     : unsigned(reg_address_bits-1 downto 0) := to_unsigned(0, reg_address_bits);
+signal register_data_1_de   : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal register_data_2_de   : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal alu_mode_de          : modes := m_xor;
+signal shift_de             : unsigned(shift_bits-1 downto 0) := to_unsigned(0, shift_bits);
+signal alu_src_is_reg_de    : std_logic := '0';
+signal reg_write_address_de : unsigned(reg_address_bits-1 downto 0) := to_unsigned(0, reg_address_bits);
+signal use_reg1_em_de       : std_logic := '0';
+signal use_reg1_mw_de       : std_logic := '0';
+signal use_reg2_em_de       : std_logic := '0';
+signal use_reg2_mw_de       : std_logic := '0';
 
 
 signal reg_write_enable_dd: std_logic;
@@ -102,19 +102,19 @@ signal alu_result_fixed_e : unsigned(data_bits-1 downto 0);
 signal mem_write_data_e : unsigned(data_bits-1 downto 0);
 signal real_reg2_data_e : unsigned(data_bits-1 downto 0);
 
-signal ip_em : unsigned(data_bits-1 downto 0);
-signal write_mem_to_reg_em : std_logic;
-signal jump_em : std_logic;
-signal reg_write_address_em : unsigned(reg_address_bits-1 downto 0);
-signal reg_write_enable_em: std_logic;
-signal mem_write_enable_em: std_logic;
-signal alu_result_em : unsigned(data_bits-1 downto 0);
-signal mem_write_data_em : unsigned(data_bits-1 downto 0);
+signal ip_em                : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal write_mem_to_reg_em  : std_logic := '0';
+signal jump_em              : std_logic := '0';
+signal reg_write_address_em : unsigned(reg_address_bits-1 downto 0) := to_unsigned(0, reg_address_bits);
+signal reg_write_enable_em  : std_logic := '0';
+signal mem_write_enable_em  : std_logic := '0';
+signal alu_result_em        : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
+signal mem_write_data_em    : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 
 signal mem_read_data_m : unsigned(data_bits-1 downto 0);
 
-signal reg_write_enable_mw  : std_logic;
-signal reg_write_data_mw    : unsigned(data_bits-1 downto 0);
+signal reg_write_enable_mw  : std_logic := '0';
+signal reg_write_data_mw    : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 
 begin
 
@@ -140,7 +140,7 @@ generic map(
 )
 port map(
     clk => clk,
-    reset => reset,
+    resetn => resetn,
 
     address_1 => ip_f(mem_address_bits + word_base - 1 downto word_base),              -- mem normal
     address_2 => alu_result_em(mem_address_bits + word_base - 1 downto word_base),     -- mem normal
@@ -173,7 +173,7 @@ port map(
     register_data_1 => reg_data_1_bypassed,
     ignore_suspend => ignore_suspend,
     clk => clk,
-    reset => reset
+    resetn => resetn
 
 );
 
@@ -259,7 +259,7 @@ generic map(
 )
 port map(
     clk  => clk,
-    reset => reset,
+    resetn => resetn,
 
     register_address_1 => early_reg_address_1, -- reg bram
     register_address_2 => early_reg_address_2, -- reg bram
@@ -297,9 +297,9 @@ early_detected_jump <=  '1' when early_opcode = 4 or early_opcode = 5 or (early_
 suspend_pipeline <= write_mem_to_reg_d & early_detected_jump;
 
 
-process (clk, reset) is begin
+process (clk, resetn) is begin
     if (clk'event and clk = '1') then
-        if reset = '1' then
+        if resetn = '0' then
             ip_fd                <= to_unsigned(0, data_bits);
             instruction_fd       <= to_unsigned(0, data_bits);
             use_reg1_em_fd       <= '0';

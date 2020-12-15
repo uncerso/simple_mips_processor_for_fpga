@@ -16,10 +16,16 @@
             <spirit:name>RST</spirit:name>
           </spirit:logicalPort>
           <spirit:physicalPort>
-            <spirit:name>reset</spirit:name>
+            <spirit:name>resetn</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>POLARITY</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.RESET.POLARITY" spirit:choiceRef="choice_list_74b5137e">ACTIVE_LOW</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
     </spirit:busInterface>
     <spirit:busInterface>
       <spirit:name>clk</spirit:name>
@@ -39,7 +45,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">reset</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">resetn:reset</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -74,7 +80,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>8efd754c</spirit:value>
+            <spirit:value>d43643c1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -90,7 +96,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>0fd1b397</spirit:value>
+            <spirit:value>d43643c1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -105,7 +111,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>adb3935a</spirit:value>
+            <spirit:value>ff64fda9</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -156,7 +162,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>reset</spirit:name>
+        <spirit:name>resetn</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -202,13 +208,16 @@
       </spirit:modelParameter>
     </spirit:modelParameters>
   </spirit:model>
+  <spirit:choices>
+    <spirit:choice>
+      <spirit:name>choice_list_74b5137e</spirit:name>
+      <spirit:enumeration>ACTIVE_HIGH</spirit:enumeration>
+      <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
+    </spirit:choice>
+  </spirit:choices>
   <spirit:fileSets>
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
-      <spirit:file>
-        <spirit:name>vivado_project.srcs/constrs_1/new/clock.xdc</spirit:name>
-        <spirit:userFileType>xdc</spirit:userFileType>
-      </spirit:file>
       <spirit:file>
         <spirit:name>vivado_project.srcs/sources_1/new/alu.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
@@ -250,9 +259,13 @@
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>vivado_project.srcs/sources_1/new/ram.data</spirit:name>
+        <spirit:userFileType>data</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>vivado_project.srcs/sources_1/new/Processor.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_a87d8218</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_53a91b7c</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -296,6 +309,10 @@
       <spirit:file>
         <spirit:name>vivado_project.srcs/sources_1/new/Registers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>vivado_project.srcs/sources_1/new/ram.data</spirit:name>
+        <spirit:userFileType>data</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>vivado_project.srcs/sources_1/new/Processor.vhd</spirit:name>
@@ -386,8 +403,8 @@
       </xilinx:taxonomies>
       <xilinx:displayName>mips_processor_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>3</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-12-15T13:23:05Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>8</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2020-12-15T21:07:33Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@2239cb1_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@46cc40a0_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
@@ -406,13 +423,59 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4bf459ed_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@5a8e9dda_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@21c9903f_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@9b0ebd1_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6b1382a2_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@37a91f48_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7bfad871_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@360960a9_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@22bbfabf_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@138553d5_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@423f738b_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1547c16c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@55b3d88d_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2bac3021_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@21c6a142_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b045ccd_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a1ac083_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c757758_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@457885ab_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@701e9a62_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e56370d_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@18fd987d_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1bcc001c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@34613977_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@10d0315d_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4f92a44a_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a5c51a2_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@783d5f25_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@801ef3c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39786fe4_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3b562f47_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@76d78da2_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3f652785_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b2a8dc9_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2ca8d0c4_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@691a4fd7_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ca98eb5_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5291275f_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7cd17350_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5e9296b9_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@138f6560_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@28d7ef80_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3420a30c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2497c510_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@35b25f26_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@de49f13_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1b4b328e_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31352bde_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@257d6c50_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.2.1</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="8c26038f"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="8c955cd2"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="f4bba957"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="9731e45e"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="94a2e078"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="cc72a26a"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="1c1eda64"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="6fe5e732"/>
     </xilinx:packagingInfo>

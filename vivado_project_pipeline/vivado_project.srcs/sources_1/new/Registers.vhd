@@ -9,7 +9,7 @@ generic (data_bits    : Natural;
 
 port (
     clk                : in  std_logic;
-    reset              : in  std_logic;
+    resetn              : in  std_logic;
     register_address_1 : in  unsigned(address_bits-1 downto 0);
     register_address_2 : in  unsigned(address_bits-1 downto 0);
     register_data_1    : out unsigned(data_bits-1 downto 0);

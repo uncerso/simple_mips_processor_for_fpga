@@ -6,10 +6,10 @@ entity test is end test;
 
 architecture test_arch of test is
 signal clk   : std_logic; 
-signal reset : std_logic := '1';
+signal resetn : std_logic := '1';
 
 begin
-DUT : entity work.mips_processor port map(clk => clk, reset => reset);
+DUT : entity work.mips_processor port map(clk => clk, resetn => resetn);
 
 process is begin
     clk <= '0';
@@ -20,7 +20,7 @@ end process;
 
 process is begin
     wait for 7ns;
-    reset <= '0';
+    resetn <= '1';
     wait;
 end process;
 

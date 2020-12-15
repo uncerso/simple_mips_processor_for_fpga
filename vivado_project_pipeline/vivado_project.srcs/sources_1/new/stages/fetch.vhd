@@ -21,7 +21,7 @@ port(
     ignore_suspend : out std_logic;
 
     clk: in std_logic;
-    reset: in std_logic
+    resetn: in std_logic
 );
 end entity;
 
@@ -43,7 +43,7 @@ generic map (
 port map (
     suspend => suspend,
     clk => clk,
-    reset => reset,
+    resetn => resetn,
     target => target_ip,
     ip => current_ip,
     imm_ip => imm_ip,
@@ -55,6 +55,7 @@ port map (
 
     branch <= '1' when (branch_eq = '1' and regs_are_equal = '1') or (branch_ne = '1' and regs_are_equal = '0') else '0';
     
+--    use_target <= '1' when jump = '1' or branch = '1' else '0';
     use_target <= jump or branch;
 
     branch_target <= shift_left(unsigned(resize(signed(raw_imm), 32)), word_base) + current_ip;
