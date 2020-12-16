@@ -14,8 +14,9 @@ generic(constant data_bits        : Natural := 32;
 );
 port(
     read_data_3 : out unsigned(data_bits-1    downto 0);
-    clk: in std_logic;
-    resetn: in std_logic
+    hlt         : in std_logic;
+    clk         : in std_logic;
+    resetn      : in std_logic
 );
 end entity;
 
@@ -116,7 +117,13 @@ signal mem_read_data_m : unsigned(data_bits-1 downto 0);
 signal reg_write_enable_mw  : std_logic := '0';
 signal reg_write_data_mw    : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 
+signal reg_write_enable_with_hlt: std_logic;
+signal mem_write_enable_with_hlt: std_logic;
+signal hlted : std_logic := '1';
 begin
+
+reg_write_enable_with_hlt <= reg_write_enable_em and not hlted;
+mem_write_enable_with_hlt <= mem_write_enable_em and not hlted;
 
 read_data_3 <= instruction_f;
 reg_address_1 <= instruction_fd(r1_pos-1 downto r1_pos-reg_address_bits);
@@ -151,7 +158,7 @@ port map(
     read_data_1 => instruction_f,
     read_data_2 => mem_read_data_m,
     write_data => mem_write_data_em,
-    write_enable => mem_write_enable_em
+    write_enable => mem_write_enable_with_hlt
 );
 
 FetchStage : entity work.fetch_stage
@@ -172,6 +179,7 @@ port map(
     raw_imm => instruction_fd(imm_bits-1 downto 0),
     register_data_1 => reg_data_1_bypassed,
     ignore_suspend => ignore_suspend,
+    hlt => hlted,
     clk => clk,
     resetn => resetn
 
@@ -270,7 +278,7 @@ port map(
     register_data_2 => reg_data_2,
     write_data  => reg_write_data,
     write_address => reg_write_address_em,
-    write_enable  => reg_write_enable_em
+    write_enable  => reg_write_enable_with_hlt
 );
 
 alu_result_fixed_e <= ip_em + two_steps when jump_de = '1' and reg_write_enable_dd = '1' else -- jal
@@ -299,6 +307,9 @@ suspend_pipeline <= write_mem_to_reg_d & early_detected_jump;
 
 process (clk, resetn) is begin
     if (clk'event and clk = '1') then
+        hlted <= hlt; -- react on hlt with 1 clk delay to avoid the case when hlt changes when clk'event and clk = '1'
+    end if;
+    if (clk'event and clk = '1' and hlted = '0') then
         if resetn = '0' then
             ip_fd                <= to_unsigned(0, data_bits);
             instruction_fd       <= to_unsigned(0, data_bits);

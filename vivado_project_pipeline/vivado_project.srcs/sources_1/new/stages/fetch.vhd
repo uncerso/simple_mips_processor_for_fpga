@@ -20,7 +20,8 @@ port(
     register_data_1 : in unsigned(data_bits-1 downto 0);
     ignore_suspend : out std_logic;
 
-    clk: in std_logic;
+    hlt   : in std_logic;
+    clk   : in std_logic;
     resetn: in std_logic
 );
 end entity;
@@ -42,6 +43,7 @@ generic map (
 )
 port map (
     suspend => suspend,
+    hlt => hlt,
     clk => clk,
     resetn => resetn,
     target => target_ip,

@@ -11,94 +11,22 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="720690fs"></ZoomStartTime>
-      <ZoomEndTime time="802291fs"></ZoomEndTime>
-      <Cursor1Time time="762890fs"></Cursor1Time>
+      <ZoomStartTime time="99570fs"></ZoomStartTime>
+      <ZoomEndTime time="192497fs"></ZoomEndTime>
+      <Cursor1Time time="1000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="165"></NameColumnWidth>
-      <ValueColumnWidth column_width="182"></ValueColumnWidth>
+      <ValueColumnWidth column_width="178"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="26" />
+   <WVObjectSize size="10" />
    <wvobject type="logic" fp_name="/test/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/test/reset">
-      <obj_property name="ElementShortName">reset</obj_property>
-      <obj_property name="ObjectShortName">reset</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/FetchStage/jump">
-      <obj_property name="ElementShortName">jump</obj_property>
-      <obj_property name="ObjectShortName">jump</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/FetchStage/branch_eq">
-      <obj_property name="ElementShortName">branch_eq</obj_property>
-      <obj_property name="ObjectShortName">branch_eq</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/FetchStage/branch_ne">
-      <obj_property name="ElementShortName">branch_ne</obj_property>
-      <obj_property name="ObjectShortName">branch_ne</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/FetchStage/regs_are_equal">
-      <obj_property name="ElementShortName">regs_are_equal</obj_property>
-      <obj_property name="ObjectShortName">regs_are_equal</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/FetchStage/reg_jump_target">
-      <obj_property name="ElementShortName">reg_jump_target</obj_property>
-      <obj_property name="ObjectShortName">reg_jump_target</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/FetchStage/target_ip">
-      <obj_property name="ElementShortName">target_ip[31:0]</obj_property>
-      <obj_property name="ObjectShortName">target_ip[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/FetchStage/branch_target">
-      <obj_property name="ElementShortName">branch_target[31:0]</obj_property>
-      <obj_property name="ObjectShortName">branch_target[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/FetchStage/use_target">
-      <obj_property name="ElementShortName">use_target</obj_property>
-      <obj_property name="ObjectShortName">use_target</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/FetchStage/branch">
-      <obj_property name="ElementShortName">branch</obj_property>
-      <obj_property name="ObjectShortName">branch</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/DecodeStage/CUNIT/opcode">
-      <obj_property name="ElementShortName">opcode[5:0]</obj_property>
-      <obj_property name="ObjectShortName">opcode[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/DecodeStage/CUNIT/funct">
-      <obj_property name="ElementShortName">funct[5:0]</obj_property>
-      <obj_property name="ObjectShortName">funct[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/DecodeStage/CUNIT/jump">
-      <obj_property name="ElementShortName">jump</obj_property>
-      <obj_property name="ObjectShortName">jump</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/FetchStage/IPMANAGER/suspend">
-      <obj_property name="ElementShortName">suspend[1:0]</obj_property>
-      <obj_property name="ObjectShortName">suspend[1:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/FetchStage/IPMANAGER/target">
-      <obj_property name="ElementShortName">target[31:0]</obj_property>
-      <obj_property name="ObjectShortName">target[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/FetchStage/IPMANAGER/suspended">
-      <obj_property name="ElementShortName">suspended[1:0]</obj_property>
-      <obj_property name="ObjectShortName">suspended[1:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/FetchStage/IPMANAGER/instruction_pointer_buf">
-      <obj_property name="ElementShortName">instruction_pointer_buf[31:0]</obj_property>
-      <obj_property name="ObjectShortName">instruction_pointer_buf[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/FetchStage/IPMANAGER/instruction_pointer">
-      <obj_property name="ElementShortName">instruction_pointer[31:0]</obj_property>
-      <obj_property name="ObjectShortName">instruction_pointer[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/imm_ip">
-      <obj_property name="ElementShortName">imm_ip[31:0]</obj_property>
-      <obj_property name="ObjectShortName">imm_ip[31:0]</obj_property>
+   <wvobject type="logic" fp_name="/test/hlt">
+      <obj_property name="ElementShortName">hlt</obj_property>
+      <obj_property name="ObjectShortName">hlt</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test/DUT/ip_f">
       <obj_property name="ElementShortName">ip_f[31:0]</obj_property>
@@ -115,6 +43,14 @@
    <wvobject type="array" fp_name="/test/DUT/instruction_fd">
       <obj_property name="ElementShortName">instruction_fd[31:0]</obj_property>
       <obj_property name="ObjectShortName">instruction_fd[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/REGS/write_enable">
+      <obj_property name="ElementShortName">write_enable</obj_property>
+      <obj_property name="ObjectShortName">write_enable</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/test/DUT/MEM/write_enable">
+      <obj_property name="ElementShortName">write_enable</obj_property>
+      <obj_property name="ObjectShortName">write_enable</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test/DUT/REGS/REGS">
       <obj_property name="ElementShortName">REGS[0:31][31:0]</obj_property>

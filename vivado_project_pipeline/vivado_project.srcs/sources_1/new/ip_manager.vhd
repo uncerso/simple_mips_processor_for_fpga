@@ -7,7 +7,8 @@ generic(data_bits : Natural);
 port(
     suspend    : in  std_logic_vector(1 downto 0);
     clk        : in  std_logic;
-    resetn      : in  std_logic;
+    hlt        : in  std_logic;
+    resetn     : in  std_logic;
     target     : in  unsigned(data_bits-1 downto 0);
     ip         : out unsigned(data_bits-1 downto 0);
     imm_ip     : out unsigned(data_bits-1 downto 0);
@@ -22,7 +23,7 @@ signal instruction_pointer : unsigned(data_bits-1 downto 0) := to_unsigned(0, da
 begin
 
     process (clk) is begin
-        if clk'event and clk = '1' then
+        if (clk'event and clk = '1' and hlt = '0') then
             if resetn = '0' then
                 suspended <= "00";
                 instruction_pointer_buf <= to_unsigned(0, data_bits);
