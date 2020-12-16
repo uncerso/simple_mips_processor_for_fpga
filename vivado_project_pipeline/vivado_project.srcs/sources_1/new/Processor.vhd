@@ -13,7 +13,8 @@ generic(constant data_bits        : Natural := 32;
         constant shift_bits       : Natural := 5
 );
 port(
-    read_data_3 : out unsigned(data_bits-1    downto 0);
+    hlt_reg_address : in  unsigned(reg_address_bits-1    downto 0);
+    hlt_reg_data    : out unsigned(data_bits-1    downto 0);
     hlt         : in std_logic;
     clk         : in std_logic;
     resetn      : in std_logic
@@ -125,15 +126,16 @@ begin
 reg_write_enable_with_hlt <= reg_write_enable_em and not hlted;
 mem_write_enable_with_hlt <= mem_write_enable_em and not hlted;
 
-read_data_3 <= instruction_f;
-reg_address_1 <= instruction_fd(r1_pos-1 downto r1_pos-reg_address_bits);
+hlt_reg_data <= reg_data_1;
+
+reg_address_1 <= instruction_fd(r1_pos-1 downto r1_pos-reg_address_bits) when hlted = '0' else hlt_reg_address;
 reg_address_2 <= instruction_fd(r2_pos-1 downto r2_pos-reg_address_bits);
 use_reg1_em_d <= '1' when reg_address_1 = reg_write_address_de else '0';
 use_reg1_mw_d <= '1' when reg_address_1 = reg_write_address_em else '0';
 use_reg2_em_d <= '1' when reg_address_2 = reg_write_address_de else '0';
 use_reg2_mw_d <= '1' when reg_address_2 = reg_write_address_em else '0';
 
-early_reg_address_1 <= instruction_f(r1_pos-1 downto r1_pos-reg_address_bits);
+early_reg_address_1 <= instruction_f(r1_pos-1 downto r1_pos-reg_address_bits) when hlted = '0' else hlt_reg_address;
 early_reg_address_2 <= instruction_f(r2_pos-1 downto r2_pos-reg_address_bits);
 use_reg1_em_f <= '1' when early_reg_address_1 = reg_write_address_de else '0';
 use_reg2_em_f <= '1' when early_reg_address_2 = reg_write_address_de else '0';
