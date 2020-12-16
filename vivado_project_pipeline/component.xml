@@ -2,11 +2,75 @@
 <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>user.org</spirit:vendor>
   <spirit:library>user</spirit:library>
-  <spirit:name>mips_processor</spirit:name>
+  <spirit:name>axi_pipe</spirit:name>
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
-      <spirit:name>reset</spirit:name>
+      <spirit:name>i</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>i_tdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>i_tvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>i_tready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>o</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
+      <spirit:master/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>o_tdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>o_tvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>o_tready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>resetn</spirit:name>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
       <spirit:slave/>
@@ -23,7 +87,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>POLARITY</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.RESET.POLARITY" spirit:choiceRef="choice_list_74b5137e">ACTIVE_LOW</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.RESETN.POLARITY" spirit:choiceRef="choice_list_74b5137e">ACTIVE_LOW</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -44,26 +108,14 @@
       </spirit:portMaps>
       <spirit:parameters>
         <spirit:parameter>
+          <spirit:name>ASSOCIATED_BUSIF</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_BUSIF">i:o</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">resetn:reset</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">resetn</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
-    </spirit:busInterface>
-    <spirit:busInterface>
-      <spirit:name>read_data_3</spirit:name>
-      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="data" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="data_rtl" spirit:version="1.0"/>
-      <spirit:master/>
-      <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>DATA</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>read_data_3</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-      </spirit:portMaps>
     </spirit:busInterface>
   </spirit:busInterfaces>
   <spirit:model>
@@ -73,14 +125,14 @@
         <spirit:displayName>Synthesis</spirit:displayName>
         <spirit:envIdentifier>:vivado.xilinx.com:synthesis</spirit:envIdentifier>
         <spirit:language>VHDL</spirit:language>
-        <spirit:modelName>mips_processor</spirit:modelName>
+        <spirit:modelName>axi_pipe</spirit:modelName>
         <spirit:fileSetRef>
           <spirit:localName>xilinx_anylanguagesynthesis_view_fileset</spirit:localName>
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d43643c1</spirit:value>
+            <spirit:value>5c131d44</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -89,14 +141,14 @@
         <spirit:displayName>Simulation</spirit:displayName>
         <spirit:envIdentifier>:vivado.xilinx.com:simulation</spirit:envIdentifier>
         <spirit:language>VHDL</spirit:language>
-        <spirit:modelName>mips_processor</spirit:modelName>
+        <spirit:modelName>axi_pipe</spirit:modelName>
         <spirit:fileSetRef>
           <spirit:localName>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:localName>
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d43643c1</spirit:value>
+            <spirit:value>5c131d44</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -111,7 +163,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>ff64fda9</spirit:value>
+            <spirit:value>0deffdf0</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -125,29 +177,12 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>20124543</spirit:value>
+            <spirit:value>5a1fc79c</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
     </spirit:views>
     <spirit:ports>
-      <spirit:port>
-        <spirit:name>read_data_3</spirit:name>
-        <spirit:wire>
-          <spirit:direction>out</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.data_bits&apos;)) - 1)">31</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>unsigned</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
       <spirit:port>
         <spirit:name>clk</spirit:name>
         <spirit:wire>
@@ -174,37 +209,109 @@
           </spirit:wireTypeDefs>
         </spirit:wire>
       </spirit:port>
+      <spirit:port>
+        <spirit:name>i_tvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>i_tready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>i_tdata</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.data_bits&apos;)) - 1)">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+          <spirit:driver>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
+          </spirit:driver>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>o_tvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>o_tready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+          <spirit:driver>
+            <spirit:defaultValue spirit:format="long">1</spirit:defaultValue>
+          </spirit:driver>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>o_tdata</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.data_bits&apos;)) - 1)">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
     </spirit:ports>
     <spirit:modelParameters>
       <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
         <spirit:name>data_bits</spirit:name>
         <spirit:displayName>Data Bits</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.data_bits" spirit:minimum="0" spirit:rangeType="long">32</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="integer">
-        <spirit:name>mem_address_bits</spirit:name>
-        <spirit:displayName>Mem Address Bits</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.mem_address_bits" spirit:minimum="0" spirit:rangeType="long">8</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.data_bits" spirit:minimum="0">32</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>reg_address_bits</spirit:name>
         <spirit:displayName>Reg Address Bits</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.reg_address_bits" spirit:minimum="0" spirit:rangeType="long">5</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="integer">
-        <spirit:name>imm_bits</spirit:name>
-        <spirit:displayName>Imm Bits</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.imm_bits" spirit:minimum="0" spirit:rangeType="long">16</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="integer">
-        <spirit:name>word_base</spirit:name>
-        <spirit:displayName>Word Base</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.word_base" spirit:minimum="0" spirit:rangeType="long">2</spirit:value>
-      </spirit:modelParameter>
-      <spirit:modelParameter spirit:dataType="integer">
-        <spirit:name>shift_bits</spirit:name>
-        <spirit:displayName>Shift Bits</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.shift_bits" spirit:minimum="0" spirit:rangeType="long">5</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.reg_address_bits" spirit:minimum="0">5</spirit:value>
       </spirit:modelParameter>
     </spirit:modelParameters>
   </spirit:model>
@@ -259,13 +366,17 @@
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>vivado_project.srcs/sources_1/new/Processor.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>vivado_project.srcs/sources_1/new/ram.data</spirit:name>
         <spirit:userFileType>data</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>vivado_project.srcs/sources_1/new/Processor.vhd</spirit:name>
+        <spirit:name>vivado_project.srcs/sources_1/new/axi_pipe.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_53a91b7c</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_3e6ef93f</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -311,11 +422,15 @@
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>vivado_project.srcs/sources_1/new/Processor.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>vivado_project.srcs/sources_1/new/ram.data</spirit:name>
         <spirit:userFileType>data</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>vivado_project.srcs/sources_1/new/Processor.vhd</spirit:name>
+        <spirit:name>vivado_project.srcs/sources_1/new/axi_pipe.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
     </spirit:fileSet>
@@ -336,14 +451,14 @@
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/mips_processor_v1_0.tcl</spirit:name>
+        <spirit:name>xgui/axi_pipe_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_20124543</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_5a1fc79c</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
-  <spirit:description>mips_processor_v1_0</spirit:description>
+  <spirit:description>axi_pipe_v1_0</spirit:description>
   <spirit:parameters>
     <spirit:parameter>
       <spirit:name>data_bits</spirit:name>
@@ -351,133 +466,43 @@
       <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.data_bits" spirit:minimum="0" spirit:rangeType="long">32</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
-      <spirit:name>mem_address_bits</spirit:name>
-      <spirit:displayName>Mem Address Bits</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.mem_address_bits" spirit:minimum="0" spirit:rangeType="long">8</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
       <spirit:name>reg_address_bits</spirit:name>
       <spirit:displayName>Reg Address Bits</spirit:displayName>
       <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.reg_address_bits" spirit:minimum="0" spirit:rangeType="long">5</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
-      <spirit:name>imm_bits</spirit:name>
-      <spirit:displayName>Imm Bits</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.imm_bits" spirit:minimum="0" spirit:rangeType="long">16</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
-      <spirit:name>word_base</spirit:name>
-      <spirit:displayName>Word Base</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.word_base" spirit:minimum="0" spirit:rangeType="long">2</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
-      <spirit:name>shift_bits</spirit:name>
-      <spirit:displayName>Shift Bits</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.shift_bits" spirit:minimum="0" spirit:rangeType="long">5</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
-      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">mips_processor_v1_0</spirit:value>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">axi_pipe_v1_0</spirit:value>
     </spirit:parameter>
   </spirit:parameters>
   <spirit:vendorExtensions>
     <xilinx:coreExtensions>
       <xilinx:supportedFamilies>
-        <xilinx:family xilinx:lifeCycle="Production">kintex7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">kintex7l</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">artix7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">artix7l</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">aartix7</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">zynq</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">azynq</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">spartan7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">aspartan7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">virtexuplus</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">virtexuplusHBM</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">kintexuplus</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">zynquplus</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">kintexu</xilinx:family>
       </xilinx:supportedFamilies>
       <xilinx:taxonomies>
         <xilinx:taxonomy>/UserIP</xilinx:taxonomy>
       </xilinx:taxonomies>
-      <xilinx:displayName>mips_processor_v1_0</xilinx:displayName>
+      <xilinx:displayName>axi_pipe_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>8</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-12-15T21:07:33Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>2</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2020-12-16T17:15:42Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@2239cb1_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@46cc40a0_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f43ecf5_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@37289c6f_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@27ee1da4_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ba2e254_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@64c458f7_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@33fb7168_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5d55ec69_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4468d8e6_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3722e456_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4de7f274_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@28dbbecc_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@609da55c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4bf459ed_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5a8e9dda_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@21c9903f_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@9b0ebd1_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@6b1382a2_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@37a91f48_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@7bfad871_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@360960a9_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@22bbfabf_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@138553d5_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@423f738b_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@1547c16c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@55b3d88d_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@2bac3021_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@21c6a142_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b045ccd_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a1ac083_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@c757758_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@457885ab_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@701e9a62_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e56370d_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@18fd987d_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@1bcc001c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@34613977_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@10d0315d_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4f92a44a_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a5c51a2_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@783d5f25_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@801ef3c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@39786fe4_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3b562f47_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@76d78da2_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3f652785_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b2a8dc9_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@2ca8d0c4_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@691a4fd7_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@ca98eb5_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5291275f_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@7cd17350_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5e9296b9_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@138f6560_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@28d7ef80_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3420a30c_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@2497c510_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@35b25f26_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@de49f13_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@1b4b328e_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@31352bde_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@257d6c50_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5a9aca8e_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@482fddb9_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7cbde4e9_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@47aab8d6_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@43ab5e22_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@78e720b4_ARCHIVE_LOCATION">/home/uncerso/src/mips_processor/vivado_project_pipeline</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.2.1</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="9731e45e"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="94a2e078"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="cc72a26a"/>
-      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="1c1eda64"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="6fe5e732"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="b47827ac"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="c86969f6"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="47614db5"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="a23b92c4"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="5153824f"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>
