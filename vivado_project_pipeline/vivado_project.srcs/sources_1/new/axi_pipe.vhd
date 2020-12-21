@@ -2,33 +2,48 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity axi_pipe is 
+entity apb_pipe is 
 generic(
     constant data_bits        : Natural := 32;
-    constant reg_address_bits : Natural := 5
+    constant reg_address_bits : Natural := 5;
+    constant word_base        : Natural := 2
 );
 port(
     clk, resetn : in std_logic;
     
-    i_tvalid : in std_logic;
-    i_tready : out std_logic;
-    i_tdata  : in std_logic_vector(data_bits-1 downto 0);
-    
-    o_tvalid : out std_logic;
-    o_tready : in std_logic;
-    o_tdata  : out std_logic_vector(data_bits-1 downto 0)
-);
-end axi_pipe;
+    paddr   : in std_logic_vector(data_bits-1 downto 0);
+    pwdata  : in std_logic_vector(data_bits-1 downto 0);
+    pwrite  : in std_logic;
+    penable : in std_logic;
+    psel    : in std_logic;
 
-architecture axi_pipe_arch of axi_pipe is
+    prdata  : out std_logic_vector(data_bits-1 downto 0);
+    pready  : out std_logic;
+    pslverr : out std_logic;
+    
+    
+    hlt_paddr   : in std_logic_vector(0 downto 0);
+    hlt_pwdata  : in std_logic_vector(0 downto 0);
+    hlt_pwrite  : in std_logic;
+    hlt_penable : in std_logic;
+    hlt_psel    : in std_logic;
+
+    hlt_prdata  : out std_logic_vector(0 downto 0);
+    hlt_pready  : out std_logic;
+    hlt_pslverr : out std_logic
+);
+end apb_pipe;
+
+architecture apb_pipe_arch of apb_pipe is
+constant addr_bits_from : Natural := reg_address_bits + word_base - 1;
+constant addr_bits_to   : Natural := word_base;
+
 signal hlt : std_logic := '0';
 
 signal hlt_reg_address : unsigned(reg_address_bits-1 downto 0) := to_unsigned(2, reg_address_bits);
 signal hlt_reg_data    : unsigned(data_bits-1 downto 0);
 
 signal self_ready : std_logic := '1';
-signal self_valid : std_logic := '0';
-signal delay      : unsigned(1 downto 0) := "00";
 
 begin
 PROC : entity work.mips_processor port map(
@@ -39,34 +54,26 @@ PROC : entity work.mips_processor port map(
     hlt_reg_data => hlt_reg_data
 );
 
-i_tready <= self_ready;
-o_tvalid <= self_valid;
-o_tdata  <= std_logic_vector(hlt_reg_data);
+hlt_reg_address <= unsigned(paddr(addr_bits_from downto addr_bits_to));
+
+pready <= self_ready;
+pslverr <= not hlt and psel;
+prdata <= std_logic_vector(hlt_reg_data);
+
+
+hlt_pready  <= self_ready;
+hlt_pslverr <= '0';
+hlt_prdata(0)  <= hlt;
 
 process (clk, resetn) is begin
     if resetn = '0' then
         self_ready <= '1';
-        self_valid <= '0';
         hlt <= '0';
     elsif (clk'event and clk = '1') then
-        self_valid <= '0';
-
-        if self_ready = '0' then
-            if delay = "00" then
-                self_ready <= o_tready;
-                self_valid <= o_tready;
-                hlt        <= not o_tready;
-            else
-                delay <= delay - 1;
-            end if;
-        elsif i_tvalid = '1' then
-            delay <= "11";
-            self_ready <= '0';
-            self_valid <= '0';
-            hlt <= '1';
-            hlt_reg_address <= unsigned(i_tdata(reg_address_bits-1 downto 0));
+        if hlt_pwrite = '1' and hlt_psel = '1' then
+            hlt <= hlt_pwdata(0);
         end if;
     end if;
 end process;
 
-end axi_pipe_arch;
+end apb_pipe_arch;
