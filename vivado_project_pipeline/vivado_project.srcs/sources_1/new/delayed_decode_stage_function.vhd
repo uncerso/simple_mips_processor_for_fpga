@@ -13,6 +13,7 @@ generic (data_bits        : Natural;
 
 port(second_reg        : in  unsigned(data_bits-1 downto 0);
      instruction       : in  unsigned(data_bits-1 downto 0);
+     suspended         : in  std_logic;
      reg_write_enable  : out std_logic
 );
 end entity;
@@ -26,14 +27,18 @@ begin
     funct <= instruction(operation_bits-1 downto 0);
     r2_is_zero <= '1' when second_reg = 0 else '0';
 
-    process (opcode, funct, r2_is_zero) is begin
-        if opcode = 35 or opcode = 3 or (8 <= opcode and opcode <= 14) then -- lw or jal or (addi addiu slti sltiu andi ori xori)
+    process (opcode, funct, r2_is_zero, suspended) is begin
+        if suspended = '1' then
+            reg_write_enable <= '0';
+        elsif opcode = 35 or opcode = 3 or (8 <= opcode and opcode <= 14) then -- lw or jal or (addi addiu slti sltiu andi ori xori)
             reg_write_enable <= '1';
         elsif opcode = 0 then -- R-type
             if funct = 11 then    -- moven
                 reg_write_enable <= not r2_is_zero;
             elsif funct = 10 then -- movez
                 reg_write_enable <= r2_is_zero;
+            elsif funct = 8 then  -- jr
+                reg_write_enable <= '0';
             else                  -- other R-type instructions
                 reg_write_enable <= '1';
             end if;

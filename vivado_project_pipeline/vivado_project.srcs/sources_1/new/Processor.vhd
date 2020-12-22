@@ -53,6 +53,7 @@ signal use_reg1_em_f  : std_logic;
 signal use_reg2_em_f  : std_logic;
 signal use_reg1_mw_f  : std_logic;
 signal use_reg2_mw_f  : std_logic;
+signal suspended_f    : std_logic;
 
 signal ip_fd           : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
 signal instruction_fd  : unsigned(data_bits-1 downto 0) := to_unsigned(0, data_bits);
@@ -60,6 +61,7 @@ signal use_reg1_em_fd  : std_logic := '0';
 signal use_reg2_em_fd  : std_logic := '0';
 signal use_reg1_mw_fd  : std_logic := '0';
 signal use_reg2_mw_fd  : std_logic := '0';
+signal suspended_fd    : std_logic := '0';
 
 signal write_mem_to_reg_d : std_logic;
 signal jump_d : std_logic;
@@ -96,7 +98,7 @@ signal use_reg1_em_de       : std_logic := '0';
 signal use_reg1_mw_de       : std_logic := '0';
 signal use_reg2_em_de       : std_logic := '0';
 signal use_reg2_mw_de       : std_logic := '0';
-
+signal suspended_de         : std_logic := '0';
 
 signal reg_write_enable_dd: std_logic;
 signal alu_result_e : unsigned(data_bits-1 downto 0);
@@ -257,6 +259,7 @@ generic map(
     operation_bits => operation_bits
 )
 port map(
+    suspended => suspended_de,
     second_reg => real_reg2_data_e,
     instruction => instruction_de,
     reg_write_enable => reg_write_enable_dd
@@ -305,7 +308,7 @@ early_detected_jump <=  '1' when early_opcode = 4 or early_opcode = 5 or (early_
                    else '0';
 
 suspend_pipeline <= write_mem_to_reg_d & early_detected_jump;
-
+suspended_f <= '1' when (suspend_pipeline(1) = '1' or suspend_pipeline(0) = '1') and ignore_suspend = '0' else '0';
 
 process (clk, resetn) is begin
     if (clk'event and clk = '1') then
@@ -319,6 +322,7 @@ process (clk, resetn) is begin
             use_reg2_em_fd       <= '0';
             use_reg1_mw_fd       <= '0';
             use_reg2_mw_fd       <= '0';
+            suspended_fd         <= '0';
 
             ip_de                <= to_unsigned(0, data_bits);
             instruction_de       <= to_unsigned(0, data_bits);
@@ -338,6 +342,7 @@ process (clk, resetn) is begin
             use_reg1_mw_de       <= '0';
             use_reg2_em_de       <= '0';
             use_reg2_mw_de       <= '0';
+            suspended_de         <= '0';
 
             ip_em                <= to_unsigned(0, data_bits);
             write_mem_to_reg_em  <= '0';
@@ -352,7 +357,7 @@ process (clk, resetn) is begin
 
         else
             ip_fd                <= ip_f;
-            if (suspend_pipeline(1) = '1' or suspend_pipeline(0) = '1') and ignore_suspend = '0' then
+            if suspended_f = '1' then
                 instruction_fd   <= to_unsigned(0, data_bits);
             else
                 instruction_fd   <= instruction_f;
@@ -361,6 +366,7 @@ process (clk, resetn) is begin
             use_reg2_em_fd       <= use_reg2_em_f;
             use_reg1_mw_fd       <= use_reg1_mw_f;
             use_reg2_mw_fd       <= use_reg2_mw_f;
+            suspended_fd         <= suspended_f;
 
             ip_de                <= ip_fd               ;
             instruction_de       <= instruction_fd      ;
@@ -385,6 +391,7 @@ process (clk, resetn) is begin
             shift_de             <= shift_d             ;
             alu_src_is_reg_de    <= alu_src_is_reg_d    ;
             reg_write_address_de <= reg_write_address_d ;
+            suspended_de         <= suspended_fd        ;
 
             ip_em                <= ip_de               ;
             write_mem_to_reg_em  <= write_mem_to_reg_de ;
@@ -392,7 +399,7 @@ process (clk, resetn) is begin
             reg_write_enable_em  <= reg_write_enable_dd ;
             mem_write_enable_em  <= mem_write_enable_de ;
             mem_write_data_em    <= mem_write_data_e    ;
-            alu_result_em    <= alu_result_fixed_e      ;
+            alu_result_em        <= alu_result_fixed_e  ;
             
             reg_write_enable_mw  <= reg_write_enable_em;
             reg_write_data_mw    <= reg_write_data;
