@@ -5,16 +5,23 @@ use work.alu_modes.all;
 -- 049
 
 entity mips_processor is
-generic(constant data_bits        : Natural := 32;
-        constant mem_address_bits : Natural := 8;
-        constant reg_address_bits : Natural := 5;
-        constant imm_bits         : Natural := 16;
-        constant word_base        : Natural := 2;
-        constant shift_bits       : Natural := 5
+generic(data_bits        : Natural;
+        mem_address_bits : Natural;
+        reg_address_bits : Natural;
+        imm_bits         : Natural;
+        word_base        : Natural;
+        shift_bits       : Natural
 );
 port(
-    hlt_reg_address : in  unsigned(reg_address_bits-1    downto 0);
-    hlt_reg_data    : out unsigned(data_bits-1    downto 0);
+    mem_raddress1 : out unsigned(mem_address_bits-1 downto 0);
+    mem_raddress2 : out unsigned(mem_address_bits-1 downto 0);
+    mem_rdata1 : in unsigned(data_bits-1 downto 0);
+    mem_rdata2 : in unsigned(data_bits-1 downto 0);
+
+    mem_waddress : out unsigned(mem_address_bits-1 downto 0);
+    mem_wdata    : out unsigned(data_bits-1 downto 0);
+    mem_wenable  : out std_logic;
+
     hlt         : in std_logic;
     clk         : in std_logic;
     resetn      : in std_logic
@@ -122,48 +129,35 @@ signal reg_write_data_mw    : unsigned(data_bits-1 downto 0) := to_unsigned(0, d
 
 signal reg_write_enable_with_hlt: std_logic;
 signal mem_write_enable_with_hlt: std_logic;
-signal hlted : std_logic := '1';
 begin
 
-reg_write_enable_with_hlt <= reg_write_enable_em and not hlted;
-mem_write_enable_with_hlt <= mem_write_enable_em and not hlted;
+reg_write_enable_with_hlt <= reg_write_enable_em and not hlt;
+mem_write_enable_with_hlt <= mem_write_enable_em and not hlt;
 
-hlt_reg_data <= reg_data_1;
-
-reg_address_1 <= instruction_fd(r1_pos-1 downto r1_pos-reg_address_bits) when hlted = '0' else hlt_reg_address;
+reg_address_1 <= instruction_fd(r1_pos-1 downto r1_pos-reg_address_bits);
 reg_address_2 <= instruction_fd(r2_pos-1 downto r2_pos-reg_address_bits);
 use_reg1_em_d <= '1' when reg_address_1 = reg_write_address_de else '0';
 use_reg1_mw_d <= '1' when reg_address_1 = reg_write_address_em else '0';
 use_reg2_em_d <= '1' when reg_address_2 = reg_write_address_de else '0';
 use_reg2_mw_d <= '1' when reg_address_2 = reg_write_address_em else '0';
 
-early_reg_address_1 <= instruction_f(r1_pos-1 downto r1_pos-reg_address_bits) when hlted = '0' else hlt_reg_address;
+early_reg_address_1 <= instruction_f(r1_pos-1 downto r1_pos-reg_address_bits);
 early_reg_address_2 <= instruction_f(r2_pos-1 downto r2_pos-reg_address_bits);
 use_reg1_em_f <= '1' when early_reg_address_1 = reg_write_address_de else '0';
 use_reg2_em_f <= '1' when early_reg_address_2 = reg_write_address_de else '0';
 use_reg1_mw_f <= '1' when early_reg_address_1 = reg_write_address_em else '0';
 use_reg2_mw_f <= '1' when early_reg_address_2 = reg_write_address_em else '0';
 
-MEM : entity work.data_memory 
-generic map(
-    address_bits => mem_address_bits,
-    data_bits => data_bits
-)
-port map(
-    clk => clk,
-    resetn => resetn,
+mem_raddress1 <= ip_f(mem_address_bits + word_base - 1 downto word_base);          -- mem normal
+mem_raddress2 <= alu_result_em(mem_address_bits + word_base - 1 downto word_base); -- mem normal
+--mem_raddress1 <= imm_ip(mem_address_bits + word_base - 1 downto word_base),              -- mem bram
+--mem_raddress2 <= alu_result_fixed_e(mem_address_bits + word_base - 1 downto word_base),  -- mem bram
+instruction_f   <= mem_rdata1;
+mem_read_data_m <= mem_rdata2;
 
-    address_1 => ip_f(mem_address_bits + word_base - 1 downto word_base),              -- mem normal
-    address_2 => alu_result_em(mem_address_bits + word_base - 1 downto word_base),     -- mem normal
---    address_1 => imm_ip(mem_address_bits + word_base - 1 downto word_base),              -- mem bram
---    address_2 => alu_result_fixed_e(mem_address_bits + word_base - 1 downto word_base),  -- mem bram
-
-    write_address => alu_result_em(mem_address_bits + word_base - 1 downto word_base),
-    read_data_1 => instruction_f,
-    read_data_2 => mem_read_data_m,
-    write_data => mem_write_data_em,
-    write_enable => mem_write_enable_with_hlt
-);
+mem_waddress <= alu_result_em(mem_address_bits + word_base - 1 downto word_base);
+mem_wdata <= mem_write_data_em;
+mem_wenable <= mem_write_enable_with_hlt;
 
 FetchStage : entity work.fetch_stage
 generic map(
@@ -183,7 +177,7 @@ port map(
     raw_imm => instruction_fd(imm_bits-1 downto 0),
     register_data_1 => reg_data_1_bypassed,
     ignore_suspend => ignore_suspend,
-    hlt => hlted,
+    hlt => hlt,
     clk => clk,
     resetn => resetn
 
@@ -311,10 +305,7 @@ suspend_pipeline <= write_mem_to_reg_d & early_detected_jump;
 suspended_f <= '1' when (suspend_pipeline(1) = '1' or suspend_pipeline(0) = '1') and ignore_suspend = '0' else '0';
 
 process (clk, resetn) is begin
-    if (clk'event and clk = '1') then
-        hlted <= hlt; -- react on hlt with 1 clk delay to avoid the case when hlt changes when clk'event and clk = '1'
-    end if;
-    if (clk'event and clk = '1' and hlted = '0') then
+    if (clk'event and clk = '1' and hlt = '0') then
         if resetn = '0' then
             ip_fd                <= to_unsigned(0, data_bits);
             instruction_fd       <= to_unsigned(0, data_bits);

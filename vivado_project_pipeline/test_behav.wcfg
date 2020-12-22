@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="780470fs"></ZoomStartTime>
-      <ZoomEndTime time="814921fs"></ZoomEndTime>
-      <Cursor1Time time="790970fs"></Cursor1Time>
+      <ZoomStartTime time="960280fs"></ZoomStartTime>
+      <ZoomEndTime time="1000322fs"></ZoomEndTime>
+      <Cursor1Time time="1000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="197"></NameColumnWidth>
-      <ValueColumnWidth column_width="174"></ValueColumnWidth>
+      <ValueColumnWidth column_width="170"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="20" />
+   <WVObjectSize size="9" />
    <wvobject type="logic" fp_name="/test/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -28,74 +28,30 @@
       <obj_property name="ElementShortName">hlt</obj_property>
       <obj_property name="ObjectShortName">hlt</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/ip_f">
+   <wvobject type="array" fp_name="/test/DUT/PROC/ip_f">
       <obj_property name="ElementShortName">ip_f[31:0]</obj_property>
       <obj_property name="ObjectShortName">ip_f[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/instruction_f">
+   <wvobject type="array" fp_name="/test/DUT/PROC/instruction_f">
       <obj_property name="ElementShortName">instruction_f[31:0]</obj_property>
       <obj_property name="ObjectShortName">instruction_f[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/ip_fd">
+   <wvobject type="array" fp_name="/test/DUT/PROC/ip_fd">
       <obj_property name="ElementShortName">ip_fd[31:0]</obj_property>
       <obj_property name="ObjectShortName">ip_fd[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/instruction_fd">
+   <wvobject type="array" fp_name="/test/DUT/PROC/instruction_fd">
       <obj_property name="ElementShortName">instruction_fd[31:0]</obj_property>
       <obj_property name="ObjectShortName">instruction_fd[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/REGS/write_enable">
-      <obj_property name="ElementShortName">write_enable</obj_property>
-      <obj_property name="ObjectShortName">write_enable</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/test/DUT/MEM/write_enable">
       <obj_property name="ElementShortName">write_enable</obj_property>
       <obj_property name="ObjectShortName">write_enable</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/reg_write_data">
-      <obj_property name="ElementShortName">reg_write_data[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg_write_data[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/reg_write_address_em">
-      <obj_property name="ElementShortName">reg_write_address_em[4:0]</obj_property>
-      <obj_property name="ObjectShortName">reg_write_address_em[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/test/DUT/reg_write_enable_em">
-      <obj_property name="ElementShortName">reg_write_enable_em</obj_property>
-      <obj_property name="ObjectShortName">reg_write_enable_em</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/alu_result_em">
-      <obj_property name="ElementShortName">alu_result_em[31:0]</obj_property>
-      <obj_property name="ObjectShortName">alu_result_em[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/alu_result_e">
-      <obj_property name="ElementShortName">alu_result_e[31:0]</obj_property>
-      <obj_property name="ObjectShortName">alu_result_e[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/alu_result_fixed_e">
-      <obj_property name="ElementShortName">alu_result_fixed_e[31:0]</obj_property>
-      <obj_property name="ObjectShortName">alu_result_fixed_e[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/ip_de">
-      <obj_property name="ElementShortName">ip_de[31:0]</obj_property>
-      <obj_property name="ObjectShortName">ip_de[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/instruction_de">
-      <obj_property name="ElementShortName">instruction_de[31:0]</obj_property>
-      <obj_property name="ObjectShortName">instruction_de[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/ip_em">
-      <obj_property name="ElementShortName">ip_em[31:0]</obj_property>
-      <obj_property name="ObjectShortName">ip_em[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/REGS/REGS">
+   <wvobject type="array" fp_name="/test/DUT/PROC/REGS/REGS">
       <obj_property name="ElementShortName">REGS[0:31][31:0]</obj_property>
       <obj_property name="ObjectShortName">REGS[0:31][31:0]</obj_property>
       <obj_property name="isExpanded"></obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/test/DUT/DelayedDecodeStage/instruction">
-      <obj_property name="ElementShortName">instruction[31:0]</obj_property>
-      <obj_property name="ObjectShortName">instruction[31:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/test/DUT/MEM/RAM">
       <obj_property name="ElementShortName">RAM[0:255][31:0]</obj_property>
