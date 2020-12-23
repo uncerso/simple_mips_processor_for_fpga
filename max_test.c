@@ -15,5 +15,6 @@ int max(int* arr, int len) {
 
 int main() { 
   int a[] = { 3, 2, 1, 8, 0, 7 };
-  return 8 == max(a, sizeof(a) / sizeof(int));
+  volatile int result = (8 == max(a, sizeof(a) / sizeof(int)));
+  return result;
 }

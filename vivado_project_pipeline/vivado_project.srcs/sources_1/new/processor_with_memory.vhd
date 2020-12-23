@@ -12,12 +12,12 @@ generic(constant data_bits        : Natural := 32;
         constant shift_bits       : Natural := 5
 );
 port(
---    hlt_mem_raddress : in  unsigned(mem_address_bits-1    downto 0);
---    hlt_mem_rdata    : out unsigned(data_bits-1    downto 0);
+    hlt_mem_raddress : in  unsigned(mem_address_bits-1    downto 0);
+    hlt_mem_rdata    : out unsigned(data_bits-1    downto 0);
 
---    hlt_mem_waddress : in  unsigned(mem_address_bits-1    downto 0);
---    hlt_mem_wdata    : in unsigned(data_bits-1    downto 0);
---    hlt_mem_enable   : in std_logic;
+    hlt_mem_waddress : in  unsigned(mem_address_bits-1    downto 0);
+    hlt_mem_wdata    : in unsigned(data_bits-1    downto 0);
+    hlt_mem_wenable   : in std_logic;
 
     hlt         : in std_logic;
     clk         : in std_logic;
@@ -48,13 +48,15 @@ signal hlted : std_logic := '1';
 
 begin
 
-mem_raddress1 <= proc_mem_raddress1;
+mem_raddress1 <= proc_mem_raddress1 when hlted = '0' else hlt_mem_raddress;
 mem_raddress2 <= proc_mem_raddress2;
 proc_mem_rdata1 <= mem_rdata1;
 proc_mem_rdata2 <= mem_rdata2;
-mem_waddress  <= proc_mem_waddress;
-mem_wdata     <= proc_mem_wdata;
-mem_wenable   <= proc_mem_wenable;
+mem_waddress  <= proc_mem_waddress when hlted = '0' else hlt_mem_waddress;
+mem_wdata     <= proc_mem_wdata    when hlted = '0' else hlt_mem_wdata;
+mem_wenable   <= proc_mem_wenable  when hlted = '0' else hlt_mem_wenable;
+
+hlt_mem_rdata <= mem_rdata1;
 
 PROC : entity work.mips_processor
 generic map(

@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity apb_pipe is 
 generic(
     constant data_bits        : Natural := 32;
-    constant reg_address_bits : Natural := 5;
+    constant mem_address_bits : Natural := 8;
     constant word_base        : Natural := 2
 );
 port(
@@ -35,31 +35,41 @@ port(
 end apb_pipe;
 
 architecture apb_pipe_arch of apb_pipe is
-constant addr_bits_from : Natural := reg_address_bits + word_base - 1;
+constant addr_bits_from : Natural := mem_address_bits + word_base - 1;
 constant addr_bits_to   : Natural := word_base;
 
-signal hlt : std_logic := '0';
+signal hlt : std_logic := '1';
 
-signal hlt_reg_address : unsigned(reg_address_bits-1 downto 0) := to_unsigned(2, reg_address_bits);
-signal hlt_reg_data    : unsigned(data_bits-1 downto 0);
+signal hlt_mem_address : unsigned(mem_address_bits-1 downto 0) := to_unsigned(0, mem_address_bits);
+signal hlt_mem_data    : unsigned(data_bits-1 downto 0);
+
+signal hlt_mem_waddress  : unsigned(mem_address_bits-1 downto 0);
+signal hlt_mem_wdata     : unsigned(data_bits-1 downto 0);
+signal hlt_mem_wenable   : std_logic;
 
 signal self_ready : std_logic := '1';
 
 begin
-PROC : entity work.mips_processor port map(
+PROC : entity work.mips_processor_with_mem port map(
+    hlt_mem_raddress => hlt_mem_address,
+    hlt_mem_rdata => hlt_mem_data,
+    hlt_mem_waddress => hlt_mem_waddress,
+    hlt_mem_wdata => hlt_mem_wdata,
+    hlt_mem_wenable => hlt_mem_wenable,
     clk => clk,
     resetn => resetn,
-    hlt => hlt,
-    hlt_reg_address => hlt_reg_address,
-    hlt_reg_data => hlt_reg_data
+    hlt => hlt
 );
-
-hlt_reg_address <= unsigned(paddr(addr_bits_from downto addr_bits_to));
 
 pready <= self_ready;
 pslverr <= not hlt and psel;
-prdata <= std_logic_vector(hlt_reg_data);
+prdata <= std_logic_vector(hlt_mem_data);
 
+hlt_mem_address <= unsigned(paddr(addr_bits_from downto addr_bits_to));
+
+hlt_mem_waddress <= unsigned(paddr(addr_bits_from downto addr_bits_to));
+hlt_mem_wdata <= unsigned(pwdata);
+hlt_mem_wenable <= pwrite and psel and penable;
 
 hlt_pready  <= self_ready;
 hlt_pslverr <= '0';
@@ -68,7 +78,7 @@ hlt_prdata(0)  <= hlt;
 process (clk, resetn) is begin
     if resetn = '0' then
         self_ready <= '1';
-        hlt <= '0';
+        hlt <= '1';
     elsif (clk'event and clk = '1') then
         if hlt_pwrite = '1' and hlt_psel = '1' then
             hlt <= hlt_pwdata(0);

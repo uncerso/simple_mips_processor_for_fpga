@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity test is 
 generic(
     constant data_bits        : Natural := 32;
-    constant reg_address_bits : Natural := 5
+    constant mem_address_bits : Natural := 8
 );
 end test;
 
@@ -14,13 +14,13 @@ signal clk   : std_logic;
 signal resetn : std_logic := '1';
 signal hlt : std_logic := '1';
 
-signal hlt_reg_address : unsigned(reg_address_bits-1 downto 0) := to_unsigned(2, reg_address_bits);
-signal hlt_reg_data    : unsigned(data_bits-1 downto 0);
+signal hlt_mem_address : unsigned(mem_address_bits-1 downto 0) := to_unsigned(0, mem_address_bits);
+signal hlt_mem_data    : unsigned(data_bits-1 downto 0);
 
 begin
 DUT : entity work.mips_processor_with_mem port map(
---    hlt_reg_address => hlt_reg_address,
---    hlt_reg_data => hlt_reg_data,
+    hlt_mem_raddress => hlt_mem_address,
+    hlt_mem_rdata => hlt_mem_data,
 
     clk => clk,
     resetn => resetn,
